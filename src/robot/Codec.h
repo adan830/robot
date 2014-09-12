@@ -8,7 +8,7 @@
 
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
-
+#include "AccountMsg.h"
 class LengthHeaderCodec : boost::noncopyable
 {
   public:
@@ -30,8 +30,8 @@ class LengthHeaderCodec : boost::noncopyable
         {
             // FIXME: use Buffer::peekInt32()
             const void* data = buf->peek();
+
             size_t len = *static_cast<const int16_t*>(data); // SIGBUS
-//            int16_t len = muduo::net::sockets::networkToHost16(be16);
             if (len >= 65535 || len <= 0)
             {
                 LOG_ERROR << "Invalid length " << len;

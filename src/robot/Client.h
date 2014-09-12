@@ -21,7 +21,6 @@ public:
     Client(EventLoop* loop,
            const InetAddress& AccountServer,
            const InetAddress& GatewayServer,
-           int blockSize,
            int sessionCount,
            int timeout,
            int threadCount);
