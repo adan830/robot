@@ -3,6 +3,7 @@
 #include <readline/history.h>
 #include "Client.h"
 #include "Robot.h"
+#include <AccountMsg.h>
 
 using namespace muduo;
 using namespace muduo::net;
@@ -10,20 +11,15 @@ using namespace muduo::net;
 void Robot::onAccountConnection(const TcpConnectionPtr& conn)
 {
     if (conn->connected()) {
+        conn->setTcpNoDelay(true);
         LOG_INFO << conn->name() << "onAccountConnection";
-        /*
+
         VerifyCMsg msg;
         GuestAccountCMsg gmsg;
 
-        buf.append(&msg, sizeof(msg));
-        buf.append(&gmsg, sizeof(gmsg));
-        */
-        Buffer buf;
-        conn->setTcpNoDelay(true);
-        conn->send(&buf);
-        owner_->onConnect();
-    } else {
-        GatewayConnect();
+        m_buffer.append(&msg, sizeof(msg));
+        m_buffer.append(&gmsg, sizeof(gmsg));
+        conn->send(&m_buffer);
     }
 }
 
@@ -32,14 +28,11 @@ void Robot::onGatewayConnection(const TcpConnectionPtr& conn)
     if (conn->connected()) {
         LOG_INFO << conn->name() << "onGatewayConnect";
         conn->setTcpNoDelay(true);
-        /*
         VerifyCMsg msg;
         msg.taskType = 1;
         m_buffer.append(&msg, sizeof(msg));
-        */
         conn->send(&m_buffer);
         OpLoginBySession();
-        owner_->onConnect();
     } else {
         owner_->onDisconnect(conn);
     }
@@ -79,5 +72,5 @@ void Robot::sendAccount()
 
 void Robot::sendGateway()
 {
-    account_.connection()->send(&m_buffer);
+    gateway_.connection()->send(&m_buffer);
 }
