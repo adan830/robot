@@ -28,6 +28,37 @@ namespace sockets
 #endif
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wold-style-cast"
+#if defined(__NOTRANS__)
+inline uint64_t hostToNetwork64(uint64_t host64)
+{
+  return (host64);
+}
+
+inline uint32_t hostToNetwork32(uint32_t host32)
+{
+  return (host32);
+}
+
+inline uint16_t hostToNetwork16(uint16_t host16)
+{
+  return (host16);
+}
+
+inline uint64_t networkToHost64(uint64_t net64)
+{
+  return (net64);
+}
+
+inline uint32_t networkToHost32(uint32_t net32)
+{
+  return (net32);
+}
+
+inline uint16_t networkToHost16(uint16_t net16)
+{
+  return (net16);
+}
+#else
 inline uint64_t hostToNetwork64(uint64_t host64)
 {
   return htobe64(host64);
@@ -57,6 +88,7 @@ inline uint16_t networkToHost16(uint16_t net16)
 {
   return be16toh(net16);
 }
+#endif
 #if defined(__clang__) || __GNUC_MINOR__ >= 6
 #pragma GCC diagnostic pop
 #else
