@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include "AccountMsg.h"
 
 void Robot::OpLoginBySession()
 {
@@ -7,7 +8,7 @@ void Robot::OpLoginBySession()
         return;
 
     tableSessions.RemoveSession(sess.account);
-/*    
+
     SessionIDLoginCMsg msg;
     m_buffer.appendInt16(sizeof(SessionIDLoginCMsg));
     m_buffer.appendInt16(SessionIDLoginCMsg::id);
@@ -16,7 +17,7 @@ void Robot::OpLoginBySession()
     m_buffer.append(sess.session);
     m_buffer.appendInt8(0);
     m_buffer.appendInt16(1010);
-*/
+
     sendGateway();
 }
 
