@@ -4,7 +4,6 @@
 Client::Client(EventLoop* loop,
                const InetAddress& AccountServer,
                const InetAddress& GatewayServer,
-               int blockSize,
                int sessionCount,
                int timeout,
                int threadCount)
@@ -18,10 +17,6 @@ Client::Client(EventLoop* loop,
     }
     threadPool_.start();
 
-    for (int i = 0; i < blockSize; ++i) {
-        message_.push_back(static_cast<char>(i % 128));
-    }
-
     for (int i = 0; i < sessionCount; ++i) {
         char buf[32];
         snprintf(buf, sizeof buf, "C%05d", i);
@@ -33,12 +28,6 @@ Client::Client(EventLoop* loop,
 
 const string& Client::message() const {
     return message_;
-}
-
-void Client::onConnect() {
-    if (numConnected_.incrementAndGet() == sessionCount_) {
-        LOG_WARN << "all connected";
-    }
 }
 
 void Client::onDisconnect(const TcpConnectionPtr& conn) {
