@@ -5,7 +5,7 @@ add_executable(robot
   RobotCmd.cc
   RobotHandler.cc
   Opcodes.cc
-  
+  Sessions.cc
 #    pp.cc
   )
 target_link_libraries(robot muduo_net muduo_base)

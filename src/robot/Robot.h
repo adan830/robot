@@ -24,11 +24,12 @@ class Robot : boost::noncopyable
         Client* owner)
       : account_(loop, AccountServer, name),
         gateway_(loop, GatewayServer, name),
-        codec_(boost::bind(&Robot::onPlayerMsg, this, _1, _2, _3, _4)),
         owner_(owner),
         bytesRead_(0),
         bytesWritten_(0),
-        messagesRead_(0) {
+        messagesRead_(0),
+        codec_(boost::bind(&Robot::onPlayerMsg, this, _1, _2, _3, _4))
+    {
         account_.setConnectionCallback(boost::bind(&Robot::onAccountConnection, this, _1));
         account_.setMessageCallback(boost::bind(&LengthHeaderCodec::onMessage, &codec_, _1, _2, _3));
         
@@ -43,19 +44,25 @@ class Robot : boost::noncopyable
     void GatewayStop() { gateway_.disconnect(); }
     
   public :
-    void HandleNULL(Buffer* recvPacket){}
+    void HandleNULL(Buffer* recvPacket);
     void HandlerGuestAccountOpcode(Buffer* recvPacket);
     void HandlerAllZoneListOpcode(Buffer* recvPacket) {}
     void HandlerRoleListOpcode(Buffer* recvPacket);
+    void HandlerAccountLoginSMsgOpcode(Buffer* recvPacket);
     
   public :
-    void OpLoginBySession();
-    
+    void OpLoginAccount();
+    void OpLoginGatewayBySession(const TcpConnectionPtr& conn);
+    void OpCreateRole();
+    void ApplyAccount(const TcpConnectionPtr& conn);
+    void RequestVerifySession(const TcpConnectionPtr& conn);
+
+    void GetSession();
   private:
     void run(uint16 Opcode, Buffer* recvPacket);
     void getcmd();
     void execcmd();
-        
+    
     void onAccountConnection(const TcpConnectionPtr& conn);
     void onGatewayConnection(const TcpConnectionPtr& conn);
     void onMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp) {}
@@ -67,15 +74,17 @@ class Robot : boost::noncopyable
     void sendAccount();
     void sendGateway();
     
-    TcpClient account_;
-    TcpClient gateway_;
+    TcpClient    account_;
+    TcpClient    gateway_;
+    Buffer       m_buffer;
+    Client*      owner_;
+    int64_t      bytesRead_;
+    int64_t      bytesWritten_;
+    int64_t      messagesRead_;
+    string       cmd;
+    SessionParam m_sess;
+
     LengthHeaderCodec codec_;
-    Buffer m_buffer;
-    Client* owner_;
-    int64_t bytesRead_;
-    int64_t bytesWritten_;
-    int64_t messagesRead_;
-    string cmd;
 };
 
 #endif

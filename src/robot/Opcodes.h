@@ -9,9 +9,10 @@ using namespace muduo::net;
 class Robot;
 enum OpcodesList
 {
-    GUEST_ACCOUNT = 0x18,
-    ALL_ZONE_LIST = 0x1A,
-    ROLE_LIST     = 0x801,
+    GUEST_ACCOUNT      = 0x18,
+    ALL_ZONE_LIST      = 0x1A,
+    ROLE_LIST          = 0x801,
+    ACCOUNT_LOGIN_SMSG = 0x1B,
 };
 
 struct OpcodeHandle

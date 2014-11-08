@@ -3,6 +3,7 @@
 
 int main(int argc, char** argv) {
     tableOpcodes.BuildOpcodeList();
+    tableSessions.InitFromFile();
     
     EventLoop loop;
     InetAddress account("192.168.0.243", 6668);

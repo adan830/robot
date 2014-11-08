@@ -10,7 +10,8 @@ Client::Client(EventLoop* loop,
     : loop_(loop),
       threadPool_(loop),
       sessionCount_(sessionCount),
-      timeout_(timeout) {
+      timeout_(timeout)
+{
     loop->runAfter(timeout, boost::bind(&Client::handleTimeout, this));
     if (threadCount > 1) {
         threadPool_.setThreadNum(threadCount);
@@ -20,9 +21,16 @@ Client::Client(EventLoop* loop,
     for (int i = 0; i < sessionCount; ++i) {
         char buf[32];
         snprintf(buf, sizeof buf, "C%05d", i);
-        Robot* session = new Robot(threadPool_.getNextLoop(), AccountServer, GatewayServer, buf, this);
-        session->AccountConnect();
-        sessions_.push_back(session);
+        Robot* pRobot = new Robot(threadPool_.getNextLoop(), AccountServer, GatewayServer, buf, this);
+
+        // 如果本地存在 Session，就不需要连接
+        // Account
+        if (tableSessions.size() > 0) {
+            pRobot->GetSession();
+        }
+        pRobot->AccountConnect();
+
+        sessions_.push_back(pRobot);
     }
 }
 
@@ -32,8 +40,6 @@ const string& Client::message() const {
 
 void Client::onDisconnect(const TcpConnectionPtr& conn) {
     if (numConnected_.decrementAndGet() == 0) {
-//        int64_t totalBytesRead = 0;
-//        int64_t totalMessagesRead = 0;
         conn->getLoop()->queueInLoop(boost::bind(&Client::quit, this));
     }
 }
@@ -44,8 +50,6 @@ void Client::quit() {
 
 void Client::handleTimeout() {
     LOG_WARN << "stop";
-//    std::for_each(sessions_.begin(), sessions_.end(),
-//                  boost::mem_fn(&Robot::AccountStop));
 }
 
 
