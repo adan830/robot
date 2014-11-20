@@ -2,11 +2,13 @@
 #define SGROBOT_OPCODES_H
 #include "Common.h"
 #include "Robot.h"
+#include "Cmd.h"
 
 using namespace muduo;
 using namespace muduo::net;
 
 class Robot;
+class Cmd;
 enum OpcodesList
 {
     GUEST_ACCOUNT      = 0x18,
@@ -20,7 +22,13 @@ struct OpcodeHandle
     void (Robot::*handler)(Buffer* recvPacket);
 };
 
+struct Command
+{
+    void (Cmd::*handler)(Buffer& sendPacket);
+};
+
 typedef std::map<int, OpcodeHandle> OpcodeMap;
+typedef std::map<std::string, Command>      CmdMap;
 class Opcodes
 {
   public :
@@ -28,9 +36,17 @@ class Opcodes
     ~Opcodes();
 
     void BuildOpcodeList();
+    void BuildCmdList();
+    
     void StoreOpcode(int Opcode, void (Robot::*handler)(Buffer* recvPacket))
     {
         OpcodeHandle& ref = mOpcodeMap[Opcode];
+        ref.handler = handler;
+    }
+
+    void StoreCmdCode(std::string cmd, void (Cmd::*handler)(Buffer& sendPacket))
+    {
+        Command& ref = mCmdMap[cmd];
         ref.handler = handler;
     }
     
@@ -53,10 +69,22 @@ class Opcodes
         }
         return emptyHandler;
     }
-    
+
+    inline Command const* LookupCmd(std::string cmd) const
+    {
+        CmdMap::const_iterator itr = mCmdMap.find(cmd);
+        if (itr != mCmdMap.end())
+        {
+            return &itr->second;
+        }
+        return NULL;
+    }
+
     static OpcodeHandle const emptyHandler;
+    static Command const emptyCmd;
     
     OpcodeMap mOpcodeMap;
+    CmdMap    mCmdMap;
 };
 
 #define tableOpcodes Singleton<Opcodes>::instance()

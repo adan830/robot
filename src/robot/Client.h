@@ -10,6 +10,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include "Cmd.h"
 #include "Robot.h"
 using namespace muduo;
 using namespace muduo::net;
@@ -28,7 +29,7 @@ public:
     const string& message() const;
     void onConnect();
     void onDisconnect(const TcpConnectionPtr& conn);
-
+    void IntCount();
 private:
 
     void quit();

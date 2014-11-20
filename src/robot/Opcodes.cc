@@ -20,3 +20,8 @@ void Opcodes::BuildOpcodeList()
     StoreOpcode(ACCOUNT_LOGIN_SMSG, &Robot::HandlerAccountLoginSMsgOpcode);
 }
 
+void Opcodes::BuildCmdList()
+{
+    StoreCmdCode("df", &Cmd::OpDungeonFight);
+}
+

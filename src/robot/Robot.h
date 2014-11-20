@@ -1,6 +1,7 @@
 #ifndef __ROBOT_H__
 #define __ROBOT_H__
 
+#include <functional>
 #include <map>
 #include "Opcodes.h"
 #include "Sessions.h"
@@ -12,6 +13,7 @@ using namespace muduo::net;
 
 typedef void (*robotcmd)();
 typedef std::map<std::string, robotcmd> cmdmap;
+typedef std::function<void (Buffer&, std::string&)> CmdCallBack;
 
 class Client;
 class Robot : boost::noncopyable
@@ -21,14 +23,17 @@ class Robot : boost::noncopyable
         const InetAddress& AccountServer,
         const InetAddress& GatewayServer,
         const string& name,
-        Client* owner)
+        Client* owner
+        )
       : account_(loop, AccountServer, name),
         gateway_(loop, GatewayServer, name),
         owner_(owner),
+        mCmdThread(boost::bind(&Robot::OpReadCmd, this), "CmdThread"),
         bytesRead_(0),
         bytesWritten_(0),
         messagesRead_(0),
-        codec_(boost::bind(&Robot::onPlayerMsg, this, _1, _2, _3, _4))
+        codec_(boost::bind(&Robot::onPlayerMsg, this, _1, _2, _3, _4)),
+        mCharId(0)
     {
         account_.setConnectionCallback(boost::bind(&Robot::onAccountConnection, this, _1));
         account_.setMessageCallback(boost::bind(&LengthHeaderCodec::onMessage, &codec_, _1, _2, _3));
@@ -51,9 +56,15 @@ class Robot : boost::noncopyable
     void HandlerAccountLoginSMsgOpcode(Buffer* recvPacket);
     
   public :
+    void OpReadCmd();
+    void SetExecCmdCallBack(CmdCallBack cb) { ExecCmdFunc = cb; }
     void OpLoginAccount();
     void OpLoginGatewayBySession(const TcpConnectionPtr& conn);
     void OpCreateRole();
+    void OpChooseRole();
+    void OpSendCmd();
+    
+  public :
     void ApplyAccount(const TcpConnectionPtr& conn);
     void RequestVerifySession(const TcpConnectionPtr& conn);
 
@@ -78,13 +89,18 @@ class Robot : boost::noncopyable
     TcpClient    gateway_;
     Buffer       m_buffer;
     Client*      owner_;
+    Thread       mCmdThread;
+    CmdCallBack  ExecCmdFunc;
+
     int64_t      bytesRead_;
     int64_t      bytesWritten_;
     int64_t      messagesRead_;
-    string       cmd;
+    std::string       cmd;
     SessionParam m_sess;
 
     LengthHeaderCodec codec_;
+  private :
+    uint64 mCharId;
 };
 
 #endif

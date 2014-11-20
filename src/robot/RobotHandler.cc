@@ -29,12 +29,18 @@ void Robot::HandlerRoleListOpcode(Buffer* recvPacket)
                  << "\tCharId : " << CharId
                  << "\tName : "   << name
                  << "\tLeadCard : " << LeadCard;
+
+        mCharId = CharId;
     }
 
     // 角色列表为空，申请创角
     if (count == 0)
     {
         OpCreateRole();   
+    }
+    else
+    {
+        OpChooseRole();
     }
 }
 
@@ -48,5 +54,6 @@ void Robot::HandlerAccountLoginSMsgOpcode(Buffer* recvPacket)
     LOG_INFO << "accuid : " << accuid << "  sign : " << sign;
     m_sess.session = sign;
     GatewayConnect();
+    mCmdThread.start();
 }
 

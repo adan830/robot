@@ -69,24 +69,28 @@ void Robot::GetSession()
 
 void Robot::run(uint16 Opcode, Buffer* recvPacket)
 {
-    LOG_INFO << "Robot run" << Opcode;
+    LOG_INFO << "Opcode " << Opcode;
     OpcodeHandle const& opHandler = tableOpcodes[Opcode];
     (this->*opHandler.handler)(recvPacket);
 }
 
-void Robot::getcmd()
+void Robot::OpReadCmd()
 {
-    char *buf = readline("");
-    if (buf == NULL || strlen(buf) < 1) {
-        return;
-    }
+    while (true) {
+        char *buf = readline("");
+        if (buf == NULL || strlen(buf) < 1) {
+            return;
+        }
 
-    if (history_search(buf, -1) == -1) {
-        add_history(buf);
-    }
+        if (history_search(buf, -1) == -1) {
+            add_history(buf);
+        }
     
-    cmd = buf;
-    free(buf);
+        cmd = buf;
+        free(buf);
+        ExecCmdFunc(m_buffer, cmd);
+//        OpSendCmd();
+    }
 }
 
 void Robot::execcmd()

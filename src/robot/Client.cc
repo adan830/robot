@@ -1,6 +1,7 @@
 #include "Robot.h"
 #include "Client.h"
 
+Cmd cmd;
 Client::Client(EventLoop* loop,
                const InetAddress& AccountServer,
                const InetAddress& GatewayServer,
@@ -21,8 +22,12 @@ Client::Client(EventLoop* loop,
     for (int i = 0; i < sessionCount; ++i) {
         char buf[32];
         snprintf(buf, sizeof buf, "C%05d", i);
-        Robot* pRobot = new Robot(threadPool_.getNextLoop(), AccountServer, GatewayServer, buf, this);
-
+        Robot* pRobot = new Robot(threadPool_.getNextLoop(),
+                                  AccountServer,
+                                  GatewayServer,
+                                  buf,
+                                  this);
+        pRobot->SetExecCmdCallBack(std::bind(&Cmd::Op, &cmd, std::placeholders::_1, std::placeholders::_2));
         // 如果本地存在 Session，就不需要连接
         // Account
         if (tableSessions.size() > 0) {
@@ -52,4 +57,7 @@ void Client::handleTimeout() {
     LOG_WARN << "stop";
 }
 
-
+void Client::IntCount()
+{
+    LOG_INFO << "IntCount";
+}

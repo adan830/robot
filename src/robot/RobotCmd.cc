@@ -38,7 +38,6 @@ void Robot::OpLoginGatewayBySession(const TcpConnectionPtr& conn)
     m_buffer.appendInt16(1015);
 
     sendGateway();
-//    conn->send(&m_buffer);
 }
 
 void Robot::OpCreateRole()
@@ -49,4 +48,21 @@ void Robot::OpCreateRole()
     m_buffer.append(&msg, sizeof(msg));
     sendGateway();
 }
+
+void Robot::OpChooseRole()
+{
+    ChooseRoleCMsg msg;
+    msg.CharId = mCharId;
+    m_buffer.append(&msg, sizeof(msg));
+    sendGateway();
+}
+
+void Robot::OpSendCmd()
+{
+    PlayerGMCMsg msg;
+    strcpy(msg.gm, cmd.c_str());
+    m_buffer.append(&msg, sizeof(msg));
+    sendGateway();
+}
+
 
