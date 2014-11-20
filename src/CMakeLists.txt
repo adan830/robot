@@ -1,3 +1,3 @@
 add_subdirectory(robot)
-#add_subdirectory(sudoku)
+#add_subdirectory(tutorial)
 

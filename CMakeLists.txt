@@ -27,8 +27,8 @@ set(CXX_FLAGS
   -lmuduo_base
   -lreadline
   -lncurses
-  # -MMD
-  # -std=c++0x
+  -MMD
+  -std=c++11
   -rdynamic
   )
 
