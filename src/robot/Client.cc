@@ -1,7 +1,7 @@
 #include "Robot.h"
 #include "Client.h"
 
-Cmd cmd;
+Commander commander;
 Client::Client(EventLoop* loop,
                const InetAddress& AccountServer,
                const InetAddress& GatewayServer,
@@ -27,7 +27,7 @@ Client::Client(EventLoop* loop,
                                   GatewayServer,
                                   buf,
                                   this);
-        pRobot->SetExecCmdCallBack(std::bind(&Cmd::Op, &cmd, std::placeholders::_1, std::placeholders::_2));
+        pRobot->SetExecCmdCallBack(std::bind(&Commander::Op, &commander, std::placeholders::_1, std::placeholders::_2));
         // 如果本地存在 Session，就不需要连接
         // Account
         if (tableSessions.size() > 0) {

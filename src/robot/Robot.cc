@@ -4,6 +4,7 @@
 #include "Client.h"
 #include "Robot.h"
 #include <AccountMsg.h>
+#include "Misc.hpp"
 
 using namespace muduo;
 using namespace muduo::net;
@@ -69,7 +70,9 @@ void Robot::GetSession()
 
 void Robot::run(uint16 Opcode, Buffer* recvPacket)
 {
-    LOG_INFO << "Opcode " << Opcode;
+    char hex[32] = {0};
+    dectohex(hex, Opcode);
+    LOG_INFO << "MsgId " << hex;
     OpcodeHandle const& opHandler = tableOpcodes[Opcode];
     (this->*opHandler.handler)(recvPacket);
 }
@@ -79,7 +82,7 @@ void Robot::OpReadCmd()
     while (true) {
         char *buf = readline("");
         if (buf == NULL || strlen(buf) < 1) {
-            return;
+            continue;
         }
 
         if (history_search(buf, -1) == -1) {
@@ -89,7 +92,7 @@ void Robot::OpReadCmd()
         cmd = buf;
         free(buf);
         ExecCmdFunc(m_buffer, cmd);
-//        OpSendCmd();
+        sendGateway();
     }
 }
 

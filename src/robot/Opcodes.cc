@@ -22,6 +22,6 @@ void Opcodes::BuildOpcodeList()
 
 void Opcodes::BuildCmdList()
 {
-    StoreCmdCode("df", &Cmd::OpDungeonFight);
+    StoreCmdCode("df", &Commander::OpDungeonFight);
 }
 

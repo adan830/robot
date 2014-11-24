@@ -2,13 +2,13 @@
 #define SGROBOT_OPCODES_H
 #include "Common.h"
 #include "Robot.h"
-#include "Cmd.h"
+#include "Commander.h"
 
 using namespace muduo;
 using namespace muduo::net;
 
 class Robot;
-class Cmd;
+class Commander;
 enum OpcodesList
 {
     GUEST_ACCOUNT      = 0x18,
@@ -24,7 +24,7 @@ struct OpcodeHandle
 
 struct Command
 {
-    void (Cmd::*handler)(Buffer& sendPacket);
+    void (Commander::*handler)(Buffer& sendPacket);
 };
 
 typedef std::map<int, OpcodeHandle> OpcodeMap;
@@ -44,7 +44,7 @@ class Opcodes
         ref.handler = handler;
     }
 
-    void StoreCmdCode(std::string cmd, void (Cmd::*handler)(Buffer& sendPacket))
+    void StoreCmdCode(std::string cmd, void (Commander::*handler)(Buffer& sendPacket))
     {
         Command& ref = mCmdMap[cmd];
         ref.handler = handler;
@@ -89,3 +89,4 @@ class Opcodes
 
 #define tableOpcodes Singleton<Opcodes>::instance()
 #endif
+
