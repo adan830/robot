@@ -1,13 +1,13 @@
 #ifndef SGROBOT_OPCODES_H
 #define SGROBOT_OPCODES_H
 #include "Common.h"
-#include "Robot.h"
+#include "Handler.h"
 #include "Commander.h"
 
 using namespace muduo;
 using namespace muduo::net;
 
-class Robot;
+class Handler;
 class Commander;
 enum OpcodesList
 {
@@ -19,7 +19,7 @@ enum OpcodesList
 
 struct OpcodeHandle
 {
-    void (Robot::*handler)(Buffer* recvPacket);
+    void (Handler::*handler)(Buffer& recvPacket);
 };
 
 struct Command
@@ -38,7 +38,7 @@ class Opcodes
     void BuildOpcodeList();
     void BuildCmdList();
     
-    void StoreOpcode(int Opcode, void (Robot::*handler)(Buffer* recvPacket))
+    void StoreOpcode(int Opcode, void (Handler::*handler)(Buffer& recvPacket))
     {
         OpcodeHandle& ref = mOpcodeMap[Opcode];
         ref.handler = handler;

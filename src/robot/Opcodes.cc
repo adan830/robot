@@ -2,7 +2,7 @@
 
 OpcodeHandle const Opcodes::emptyHandler =
 {
-    &Robot::HandleNULL
+    &Handler::HandleNULL
 };
     
 Opcodes::Opcodes()
@@ -14,10 +14,10 @@ Opcodes::~Opcodes()
 
 void Opcodes::BuildOpcodeList()
 {
-    StoreOpcode(GUEST_ACCOUNT,      &Robot::HandlerGuestAccountOpcode);
-    StoreOpcode(ALL_ZONE_LIST,      &Robot::HandlerAllZoneListOpcode);
-    StoreOpcode(ROLE_LIST,          &Robot::HandlerRoleListOpcode);
-    StoreOpcode(ACCOUNT_LOGIN_SMSG, &Robot::HandlerAccountLoginSMsgOpcode);
+    StoreOpcode(GUEST_ACCOUNT,      &Handler::HandlerGuestAccountOpcode);
+    StoreOpcode(ALL_ZONE_LIST,      &Handler::HandlerAllZoneListOpcode);
+    StoreOpcode(ROLE_LIST,          &Handler::HandlerRoleListOpcode);
+    StoreOpcode(ACCOUNT_LOGIN_SMSG, &Handler::HandlerAccountLoginSMsgOpcode);
 }
 
 void Opcodes::BuildCmdList()
