@@ -35,7 +35,7 @@ void Robot::OpLoginGatewayBySession(const TcpConnectionPtr& conn)
     m_buffer.appendInt32(0);
     m_buffer.append(m_sess.session);
     m_buffer.appendInt8(0);
-    m_buffer.appendInt16(1015);
+    m_buffer.appendInt16(mDestZone);
 
     sendGateway();
 }
@@ -65,4 +65,8 @@ void Robot::OpSendCmd()
     sendGateway();
 }
 
+void Robot::OpStartInput()
+{
+    mCmdThread.start();
+}
 
