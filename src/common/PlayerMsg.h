@@ -20,6 +20,11 @@ CORE_NAMESPACE_START
 #include "RoleMsg.h"
 
 /**
+ * \brief 聊天消息定义 消息ID: 0x930 ~ 0x93F
+ */
+#include "DrawCardMsg.h"
+
+/**
  * \brief 聊天消息定义 消息ID: 0x940 ~ 0x94F
  */
 #include "HuntingMsg.h"

@@ -46,6 +46,7 @@ struct ResponseChatDataSMsg: public PlayerMsg
 	uint8 chatType;				//见 enum ChatType
 	uint32 lastChatTime;		//最后发送聊天的时间
 	uint32 freeChatTimes;		//剩余免费聊天次数
+	bool newchat;				//有新私聊
 	uint8 count;				//聊天内容条数
 	struct ChatRecord
 	{
@@ -61,6 +62,7 @@ struct ResponseChatDataSMsg: public PlayerMsg
 		, chatType(1)
 		, lastChatTime(0)
 		, freeChatTimes(0)
+		, newchat(false)
 		, count(0)
     {
 	

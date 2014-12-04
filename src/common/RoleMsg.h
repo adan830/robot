@@ -81,16 +81,13 @@ struct HeartBeatCMsg : public PlayerMsg
 	}
 };
 
-/** 
-  * 进入场景
-  */
-struct EnterSceneSMsg: public PlayerMsg
+struct StartGameSMsg: public PlayerMsg
 {                                          
 	enum{ id = 0x805 };
 
     uint32 time;
 
-	EnterSceneSMsg()
+    StartGameSMsg()
 		: PlayerMsg(id ,sizeof(*this))
         , time(0)
 	{}
@@ -152,6 +149,8 @@ struct PlayerBasePropsSMsg : public PlayerMsg
     uint32 soulrefined;              // 精魄
     uint32 horsesoul;                // 马魂
     uint32 scroll;                   // 残卷
+    uint32 tigersoul;                // 虎魂
+    uint32 picscroll;                // 残画
     uint32 recharged;                //充值总元宝
 	uint8 level;					 //等级
     uint8 viplevel;                  //VIP等级
@@ -183,6 +182,8 @@ struct PlayerBasePropsSMsg : public PlayerMsg
         , soulrefined(0)
         , horsesoul(0)
         , scroll(0)
+        , tigersoul(0)
+        , picscroll(0)
         , recharged(0)
         , level(1)
         , viplevel(0)

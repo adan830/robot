@@ -1,3 +1,3 @@
 add_subdirectory(robot)
-#add_subdirectory(tutorial)
+add_subdirectory(tutorial)
 

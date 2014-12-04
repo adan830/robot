@@ -32,8 +32,12 @@ enum LootType
     LootType_Box             = 14,  //宝箱，需要使用钥匙开启
     LootType_ArenaPoint      = 20,  //竞技场勋章
     LootType_Renown          = 21,  //声望
-    LootType_HorseSoup       = 22,  //马魂
+    LootType_HorseSoul       = 22,  //马魂
     LootType_Scroll          = 23,  //残卷
+    LootType_TigerSoul       = 24,  //虎魂
+    LootType_PicScroll       = 25,  //残画
+    LootType_SoulStone       = 26,  //灵石
+    LootType_SoulRefined     = 27,  //精魄
     LootType_Null			 = 255, //空
 };
 
@@ -175,12 +179,24 @@ struct LootTrade
         if (loottype == LootType_Renown)
             return ResType_Renown;
 
-        if (loottype == LootType_HorseSoup)
+        if (loottype == LootType_HorseSoul)
             return ResType_HorseSoul;
 
         if (loottype == LootType_Scroll)
             return ResType_Scroll;
         
+        if (loottype == LootType_TigerSoul)
+            return ResType_TigerSoul;
+
+        if (loottype == LootType_PicScroll)
+            return ResType_PicScroll;
+
+        if (loottype == LootType_SoulStone)
+            return ResType_SoulStone;
+
+        if (loottype == LootType_SoulRefined)
+            return ResType_SoulRefined;
+
         return ResType_Unknow;
     }
     
@@ -220,7 +236,28 @@ struct LootTrade
 
         if (restype == ResType_ArenaPoint)
             return LootType_ArenaPoint;
+
+        if (restype == ResType_Renown)
+            return LootType_Renown;
+
+        if (restype == ResType_HorseSoul)
+            return LootType_HorseSoul;
+
+        if (restype == ResType_Scroll)
+            return LootType_Scroll;
         
+        if (restype == ResType_TigerSoul)
+            return LootType_TigerSoul;
+
+        if (restype == ResType_PicScroll)
+            return LootType_PicScroll;
+
+        if (restype == ResType_SoulStone)
+            return LootType_SoulStone;
+
+        if (restype == ResType_SoulRefined)
+            return LootType_SoulRefined;
+
         return LootType_None;
     }
 

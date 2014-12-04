@@ -113,27 +113,6 @@ struct NormalShopInfoSMsg : public PlayerMsg
     }
 };
 
-struct EquipShopInfoSMsg : public PlayerMsg
-{
-    enum { id = 0xA94 };
-
-    uint32 count;
-    struct ShopItem
-    {
-        uint32 id;
-        uint32 count;
-    } lists[0];
-
-    EquipShopInfoSMsg()
-        : PlayerMsg(id, sizeof(*this))
-        , count(0)
-    {}
-
-    uint16 getSize()
-    {
-        return sizeof(*this) + count * sizeof(lists[0]);
-    }
-};
 #pragma pack(pop)
 
 CORE_NAMESPACE_END

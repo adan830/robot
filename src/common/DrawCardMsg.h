@@ -57,9 +57,10 @@ struct DrawCardDataSMsg: public PlayerMsg
 	uint8 remainDrawTimes;			//剩余刷新次数
 	struct
 	{
+		uint8 itemType;				//类型
 		uint16 itemId;				//道具ID 0表示翻牌背面
-		uint16 itemCount;			//道具数量
-		bool gained;				//是否已经获取
+		uint32 itemCount;			//道具数量
+		uint8 gained;				//是否已经获取
 	}data[6];
     
     DrawCardDataSMsg()
@@ -79,12 +80,14 @@ struct DrawCardRewardSMsg: public PlayerMsg
     enum { id = 0x932};
 
 	uint8 cardId;					//牌号1~6
+	uint8 itemType;					//类型
 	uint16 itemId;					//道具ID 0表示翻牌背面
-	uint16 itemCount;				//道具数量
+	uint32 itemCount;				//道具数量
     
     DrawCardRewardSMsg()
         : PlayerMsg(id, sizeof(*this))
 		, cardId(0)
+		, itemType(0)
 		, itemId(0)
 		, itemCount(0)
     {

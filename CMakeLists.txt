@@ -23,8 +23,6 @@ set(CXX_FLAGS
   -Wwrite-strings
   -march=native
   -pthread
-  -lmuduo_net
-  -lmuduo_base
   -lreadline
   -lncurses
   -MMD

@@ -27,9 +27,11 @@ enum VIPSettings
     VIP_DaySignReward25,            //普通副本重置次数
     VIP_BabelReset,                 //通天塔可购买的次数
     VIP_ArenaLife,                  //竞技场可购买的次数
+    VIP_ArenaClearCD,               //竞技场清楚冷却CD
 	VIP_HuntingTimes		= 26,	//狩猎上限
 	VIP_HuntingBuyTimes		= 27,	//狩猎购买
-
+    VIP_HorseDunEnterCount,         //战马副本进入次数
+    VIP_ScrollDunEnterCount,        //兵书副本进入次数
 };
 
 enum

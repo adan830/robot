@@ -47,6 +47,9 @@ enum ResChgType
     ResChgType_CreateRole       = 40, // 初始创建角色，系统赠送
     ResChgType_ArenaBuyLife     = 41, // 竞技场购买进入次数
     ResChgType_ArenaClearCD     = 42, // 竞技场清除挑战CD
+    ResChgType_DrawCard			= 43, // 点神兵
+    ResChgType_HorseDun         = 44, // 购买战马副本次数
+    ResChgType_ScrollDun        = 45, // 购买兵书副本次数
 };
 
 #endif

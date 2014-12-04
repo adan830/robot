@@ -22,11 +22,14 @@ CORE_NAMESPACE_START
 struct RequestRoleListMsg : public PlayerMsg 
 {
 	enum{ id = 0x700 };
-	playerid_t accuid;			
+    
+    int fd;
+	playerid_t accuid;
+    
 	RequestRoleListMsg() : PlayerMsg(id, sizeof(*this))
-	, accuid(0)
-	{
-	}
+        , fd(0)
+        , accuid(0)
+	{}
 };
 
 /**
@@ -35,13 +38,15 @@ struct RequestRoleListMsg : public PlayerMsg
 struct CreateRoleMsg : public PlayerMsg
 {
 	enum{ id = 0x701 };
-	char playerName[PLAYER_NAME_SIZE];			//角色名称
-	playerid_t accuid;						//账号Uid
-	uint32 cardKey;								//卡牌
+	char playerName[PLAYER_NAME_SIZE];  //角色名称
+	playerid_t accuid;                  //账号Uid
+	uint32 cardKey;                     //卡牌
+    int fd;
 	CreateRoleMsg()
 		: PlayerMsg(id, sizeof(*this))
 		, accuid(0)
 		, cardKey(0)
+        , fd(0)
 	{
 		bzero(playerName, PLAYER_NAME_SIZE);
 	}
@@ -53,11 +58,15 @@ struct CreateRoleMsg : public PlayerMsg
 struct ChooseRoleMsg: public PlayerMsg
 {
 	enum{ id = 0x702 };
+    
+    int fd;
 	uint32 playerId;  //角色临时ID
 	playerid_t CharId;//角色Uid
 	uint32 loginIp;
-	ChooseRoleMsg()
-		: PlayerMsg(id, sizeof(*this)), playerId(0)
+    ChooseRoleMsg()
+		: PlayerMsg(id, sizeof(*this))
+        , fd(0)
+        , playerId(0)
 		, CharId(0)
 		, loginIp(0)
 	{}
@@ -79,6 +88,27 @@ struct ChoosePlayerRoleCardMsg : public PlayerMsg
         , card(0)
     {}
 };
+
+/**
+ * \brief 绑定角色ID 和 fd 
+ */
+struct BindRoleWithFdMsg: public PlayerMsg
+{
+	enum{ id = 0x704 };
+    int fd;                //文件描述符
+	uint32 playerId;       //角色临时ID
+	playerid_t CharId;     //角色Uid
+    uint64 bindTimeStamp;  //绑定时刻时间戳
+    
+    BindRoleWithFdMsg()
+		: PlayerMsg(id, sizeof(*this))
+        , fd(0)
+        , playerId(0)
+		, CharId(0)
+        , bindTimeStamp(0)
+	{}
+};
+
 
 #pragma pack(pop)
 

@@ -169,6 +169,7 @@ struct ShopNormalBase
     WORD PriceType;
     WORD MoneyType;
     WORD Price;
+    WORD BuyLimit;
     DWORD Count[13];
 
 	struct ExtCells {};

@@ -665,6 +665,7 @@ struct CardBase
 	size_t getFixSize() {return ((char*)&soulstone - (char*)this) + sizeof(soulstone); }
 	size_t getExtSize() {return 0;}
 	bool parse(ExtCells* ext) {
+        DEBUG_LOG("CardBaseTable ID %u\n", getId());
         pAttackSkillBase = siSkillTable.find(ATKID);
         if (!pAttackSkillBase)
         {
@@ -1849,7 +1850,8 @@ struct VipTimesBase
     WORD expDunEnterCount;
     WORD moneyDunEnterCount;
 	WORD HuntingCost;		//购买狩猎投掷次数消耗元宝数
-
+    WORD horseDunEnterCount;
+    WORD scrollDunEnterCount;
     
 	struct ExtCells {};
 	KEY_TYPE getId()          {return ID;            }
@@ -2319,6 +2321,128 @@ struct HuntingMissionBase
 	}
 	
 };
+
+/**
+ * \brief LuckyDraw表结构定义
+ */
+#define siLuckyDrawTable Singleton<DataTable<LuckyDrawBase> >::getInstance()
+struct LuckyDrawBase
+{
+	typedef DWORD KEY_TYPE;
+	
+	WORD	groupID;				//组编号（共6组）
+	WORD	number;					//组内编号
+	WORD	showWeight;				//随机到的权重
+	WORD	luckyWeight;			//抽到的权重
+	WORD	objectType;				//道具类型 物品类型： 3卡牌 4装备 5卡牌碎片 6装备碎片 9道具
+	WORD	objectID;				//道具id
+
+	union
+	{
+		struct
+		{
+			DWORD	num1;					//数量1
+			WORD	numProbability1;		//数量1概率
+			DWORD	num2;					//数量2
+			WORD	numProbability2;		//数量2概率
+			DWORD	num3;					//数量3
+			WORD	numProbability3;		//数量3概率
+			DWORD	num4;					//数量4
+			WORD	numProbability4;		//数量4概率
+			DWORD	num5;					//数量5
+			WORD	numProbability5;		//数量5概率
+		};
+		struct
+		{
+			DWORD	num;
+			WORD	numProb;
+		}probs[5];
+	};
+
+	struct ExtCells
+	{
+
+	};
+
+	KEY_TYPE getId()
+	{
+		return MAKE_DWORD(groupID, number);
+	}
+
+	size_t getFixSize()
+	{
+		return sizeof(*this);
+	}
+
+	size_t getExtSize()
+	{
+		return 0;
+	}
+
+	bool parse(ExtCells* ext)
+	{
+		DEBUG_LOG("LuckyDrawTable: %u\n", getId());
+		for(uint8 i=1; i<5; ++i)
+		{
+			probs[i].numProb  += probs[i-1].numProb;
+		}
+		return true;
+	}
+
+	bool check()
+	{
+		return true;
+	}
+	
+};
+
+/**
+ * \brief LuckyDrawBase表结构定义
+ */
+#define siLuckyDrawBaseTable Singleton<DataTable<LuckyDrawBaseBase> >::getInstance()
+struct LuckyDrawBaseBase
+{
+	typedef WORD KEY_TYPE;
+	
+	WORD	times;					//次数
+	WORD	objectType;				//消耗道具类型
+	WORD	objectID;				//消耗道具ID
+	WORD	luckyWeight;			//消耗道具数量
+
+	struct ExtCells
+	{
+
+	};
+
+	KEY_TYPE getId()
+	{
+		return times;
+	}
+
+	size_t getFixSize()
+	{
+		return sizeof(*this);
+	}
+
+	size_t getExtSize()
+	{
+		return 0;
+	}
+
+	bool parse(ExtCells* ext)
+	{
+		DEBUG_LOG("LuckyDrawBaseTable: %u\n", getId());
+		return true;
+	}
+
+	bool check()
+	{
+		return true;
+	}
+	
+};
+
+
 
 //
 // 供人复制用的一段代码，请保留

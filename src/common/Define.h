@@ -89,6 +89,10 @@ enum GameSetting
 	GameSetting_Chat_cost				= 62,
 	GameSetting_Hunting_number			= 63,
 	GameSetting_Player_update_Hunting	= 64,
+
+	GameSetting_Lucky_free_times		= 67,// 点神兵每日免费刷新次数
+	GameSetting_Lucky_refresh_cost		= 68,// 点神兵刷新消耗铜币数
+	GameSetting_Lucky_conversion		= 69,// 1个神兵令对应元宝价值
 };
 enum Oper
 {
@@ -117,6 +121,7 @@ enum PlayerDataType
 	PlayerDataType_ArenaData	= 0x00000400,			//竞技场数据
 	PlayerDataType_FriendData	= 0x00001000,			//好友数据
 	PlayerDataType_HuntingData	= 0x00002000,			//狩猎数据
+	PlayerDataType_DrawCardData = 0x00004000,			//点神兵数据
 };
 
 /** 
@@ -243,7 +248,7 @@ struct FightProperties
 	{
         uint32* p = &this->hp;
         const uint32* q = &fightProp.hp;
-        uint32* end = &this->dodgerat;
+        uint32* end = &this->mPenetration;
         
         while (p <= end) {
             *p += *q;
@@ -358,12 +363,12 @@ struct FightPropsPercent
     uint32  agile;              //  统率
     uint32  wisdom;             //  智力
     uint32  critrat;            //  暴击率
-    uint32  toughnessrat;       //韧性值率
-    uint32  accuracyrat;        //命中值率
-    uint32  dodgerat;           //躲闪值率
+    uint32  toughnessrat;       //  韧性值率
+    uint32  accuracyrat;        //  命中值率
+    uint32  dodgerat;           //  躲闪值率
     uint32  HPrat;				//	生命值率
 	uint32	attackrat;			//	攻击力率
-	uint32	pPenetration;	//	护甲穿透
+	uint32	pPenetration;   	//	护甲穿透
 	uint32	mPenetration;		//	法术穿透
     
 	FightPropsPercent(uint8 init = 100)
@@ -437,7 +442,7 @@ struct FightPropsPercent
 	{
         uint32*       p = &this->maxHp;
         const uint32* q = &fightPropPer.maxHp;
-        uint32* end = &this->dodgerat;
+        uint32* end = &this->mPenetration;
         
         while (p <= end) {
             *p += *q;

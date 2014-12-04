@@ -144,6 +144,7 @@ enum
     SHOP_NORMAL_BUY_COUNT_LIMIT  = 450, // 普通商城，物品购买次数超过上限
     SHOP_NORMAL_LESS_GOLD        = 451, // 普通商城，没有足够的元宝购买物品
     SHOP_NORMAL_RUCKSACK_FULL    = 452, // 普通商城，背包已满不能购买
+    SHOP_NORMAL_BUY_LIMIT        = 453, // 普通商城，不能突破终生购买次数限制
 };
 
 enum

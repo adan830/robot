@@ -34,6 +34,10 @@ enum PropIndex
     PropIndex_DailySp             = 28, // 每日体力值
     PropIndex_HorseSoul           = 29, // 马魂
     PropIndex_Scroll              = 30, // 残卷
+    PropIndex_TigerSoul           = 31, // 虎魂
+    PropIndex_PicScroll           = 32, // 残画
+    PropIndex_HorseDunEnterCount  = 33, // 战马副本的进入次数
+    PropIndex_ScrollDunEnterCount = 34, // 兵书副本的进入次数
 };
 
 //卡牌属性类型索引
@@ -69,6 +73,8 @@ enum ResType
     ResType_SoulRefined     = 11,  //精魄
     ResType_HorseSoul       = 12,  //马魂
     ResType_Scroll          = 13,  //残卷
+    ResType_TigerSoul       = 14,  //虎魂
+    ResType_PicScroll       = 15,  //残画
     ResType_None            = 100, //道具背包容器大小
 };
 

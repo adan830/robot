@@ -11,13 +11,14 @@ CORE_NAMESPACE_START
 /**
  * 卡牌炼化
  */
-struct PlayerCardMeltCMsg : public PlayerMsg
+struct PlayerCardRefineCMsg : public PlayerMsg
 {
     enum { id = 0xAD0 };
 
-    MeltSlot lists[6];
+    int slottype;
+    int slots[5];
     
-    PlayerCardMeltCMsg()
+    PlayerCardRefineCMsg()
         : PlayerMsg(id, sizeof(*this))
     {}
 };
@@ -25,28 +26,29 @@ struct PlayerCardMeltCMsg : public PlayerMsg
 /**
  * 卡牌炼化结果
  */
-struct PlayerCardMeltSMsg : public PlayerMsg
+struct PlayerCardRefineSMsg : public PlayerMsg
 {
     enum { id = 0xAD1 };
 
     uint32 ret;
 
-    PlayerCardMeltSMsg()
+    PlayerCardRefineSMsg()
         : PlayerMsg(id, sizeof(*this))
+        , ret(0)
     {}
 };
 
 /*
  * 卡牌重生
  */
-struct PlayerCardRebornCMsg : public PlayerMsg
+struct PlayerCardRevertCMsg : public PlayerMsg
 {
     enum { id = 0xAD2 };
 
     uint16 slottype;
     uint16 slot;
 
-    PlayerCardRebornCMsg()
+    PlayerCardRevertCMsg()
         : PlayerMsg(id, sizeof(*this))
     {}
 };
@@ -54,14 +56,15 @@ struct PlayerCardRebornCMsg : public PlayerMsg
 /*
  * 卡牌炼化结果
  */
-struct PlayerCardRebornSMsg : public PlayerMsg
+struct PlayerCardRevertSMsg : public PlayerMsg
 {
     enum { id = 0xAD3 };
 
     uint32 ret;
     
-    PlayerCardRebornSMsg()
+    PlayerCardRevertSMsg()
         : PlayerMsg(id, sizeof(*this))
+        , ret(0)
     {}
 };
 

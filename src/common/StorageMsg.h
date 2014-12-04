@@ -594,6 +594,34 @@ struct SaveHuntingDataMsg: public MsgBase
 		
 	}
 };
+
+/**
+ * \brief 保存点神兵数据
+ */
+struct SaveDrawCardDataMsg: public PlayerMsg
+{
+    enum { id = 0x61};
+
+    playerid_t playerGuid;
+	uint8 remainDrawTimes;			//剩余刷新次数
+	struct
+	{
+		uint16 prob;				//概率
+		uint16 itemType;			//类型
+		uint16 itemId;				//道具ID 
+		uint16 itemCount;			//道具数量
+		uint8 itemPos;
+		bool gained;				//是否已经获取
+	}data[6];
+    
+    SaveDrawCardDataMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , playerGuid(0)
+		, remainDrawTimes(0)
+    {
+		bzero(data, sizeof(data));
+	}
+};
 #pragma pack(pop)
 
 CORE_NAMESPACE_END

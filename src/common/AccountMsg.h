@@ -485,10 +485,11 @@ struct PlayerOnlineMsg: public PlayerMsg
 struct PlayerOfflineMsg: public PlayerMsg
 {
 	enum{ id = 0x402 };
+    uint64 bindTimeStamp;
 	PlayerOfflineMsg()
 		: PlayerMsg(id, sizeof(*this))
-	{
-	}
+        , bindTimeStamp(0)
+	{}
 };
 
 /**
@@ -529,11 +530,13 @@ struct CheckSessionIDMsg : public PlayerMsg
     accuid_t accuid;
     char sign[PLAYER_SIGN_SIZE];
     int fd;
+    uint64 bindTimeStamp;
     
     CheckSessionIDMsg()
         : PlayerMsg(id, sizeof(*this))
         , accuid(0)
         , fd(0)
+        , bindTimeStamp(0)
     {
         bzero(sign, sizeof(sign));
     }
@@ -545,7 +548,7 @@ struct CheckSessionIDRetMsg : public PlayerMsg
 
     enum {
         RET_OK     = 0,
-        RET_FAILED = 1
+        RET_FAILED = 1,
     };
 
     int fd;

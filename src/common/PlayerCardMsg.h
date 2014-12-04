@@ -313,10 +313,10 @@ struct PlayerCardFightPropSMsg : public PlayerMsg
         uint32 mdefence;  // 法防
         uint32 mPenetration;
         uint32 power;     // 战力
-        uint32 crit;	  //	暴击值       1-999999
-        uint32 accuracy;  //	命中值       1-999999
-        uint32 dodge;	  //	躲闪值       1-999999
-        uint32 toughness; //	韧性值       1-999999
+        uint32 crit;	  // 暴击值       1-999999
+        uint32 accuracy;  // 命中值       1-999999
+        uint32 dodge;	  // 躲闪值       1-999999
+        uint32 toughness; // 韧性值       1-999999
         uint32 speed;
     } list[0];
 

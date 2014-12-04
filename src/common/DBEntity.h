@@ -30,6 +30,8 @@ struct VipProps
     uint32 EliteDunResetCount;
     uint32 ExpDunEnterCount;
     uint32 MoneyDunEnterCount;
+    uint32 HorseDunEnterCount;
+    uint32 ScrollDunEnterCount;
     
     VipProps()
         : BuySpCount(0)
@@ -38,6 +40,8 @@ struct VipProps
         , EliteDunResetCount(0)
         , ExpDunEnterCount(0)
         , MoneyDunEnterCount(0)
+        , HorseDunEnterCount(0)
+        , ScrollDunEnterCount(0)
         {}
 };
 
@@ -54,6 +58,8 @@ struct PlayerBaseProperties
     uint32 soulrefined;
     uint32 horsesoul;
     uint32 scroll;
+    uint32 tigersoul;
+    uint32 picscroll;
     uint32 recharged;
 	uint32 level;
     uint32 viplevel;
@@ -81,6 +87,8 @@ struct PlayerBaseProperties
         , soulrefined(0)
         , horsesoul(0)
         , scroll(0)
+        , tigersoul(0)
+        , picscroll(0)
         , recharged(0)
         , level(1)
         , viplevel(0)
@@ -105,6 +113,12 @@ struct PlayerBaseProperties
         arenapoint   = 0;
         soulstone    = 0;
         soulrefined  = 0;
+        horsesoul    = 0;
+        scroll       = 0;
+        tigersoul    = 0;
+        picscroll    = 0;
+        recharged    = 0;
+        
         level        = 1;
         viplevel     = 0;
         exp          = 0;
@@ -562,6 +576,27 @@ struct HuntingProps
 		, restoreTime(0)
 	{
 
+	}
+};
+
+struct DrawCardProps
+{
+	uint8 remainTimes;          //剩余刷新次数
+
+	struct
+	{
+		uint16 prob;           //概率        
+		uint8  itemType;       //类型
+		uint16 itemId;         //道具ID      
+		uint32 itemCount;      //数量        
+		uint8  itemPos;        //位置        
+		bool   gained;         //是否已经获得
+	}cards[6];
+
+	DrawCardProps()
+		: remainTimes(0)
+	{
+		bzero(cards, sizeof(cards));
 	}
 };
 

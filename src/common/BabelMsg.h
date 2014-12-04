@@ -13,18 +13,18 @@ CORE_NAMESPACE_START
 struct BabelSMsg : public PlayerMsg
 {
     enum { id = 0xAC0 };
-
-    uint32 curr;
-    uint32 best;
-    uint32 lifeused;
-    uint32 lifecount;
-    uint32 resetused;
-    uint32 resetcount;
-    uint32 autofight;
-    uint32 starttime;
-    uint32 endtime;
-    uint32 currtime;
-    uint32 startlevel;
+    
+    uint32 curr;       // 当前所在层数
+    uint32 best;       // 历史最高层数
+    uint32 lifeused;   // 已经用掉的挑战次数
+    uint32 lifecount;  // 可以挑战的总次数
+    uint32 resetused;  // 已经重置的次数
+    uint32 resetcount; // 可以重置的总次数
+    uint32 autofight;  // 是否处在扫荡状态
+    uint32 starttime;  // 扫荡开始的时间戳
+    uint32 endtime;    // 扫荡结束的时间戳
+    uint32 currtime;   // 服务器当前时间戳
+    uint32 startlevel; // 扫荡开始的层数
     
     BabelSMsg()
         : PlayerMsg(id, sizeof(*this))
@@ -49,12 +49,12 @@ struct BabelOpCMsg : public PlayerMsg
     enum { id = 0xAC1 };
 
     uint32 op;
-//    uint32 param;
+    uint32 param;
     
     BabelOpCMsg()
         : PlayerMsg(id, sizeof(*this))
         , op(0)
-//        , param(0)
+        , param(0)
     {}
 };
 
@@ -66,12 +66,14 @@ struct BabelOpSMsg : public PlayerMsg
     enum { id = 0xAC2 };
 
     uint32 op;
-    uint8  ret;
-
+    uint32 ret;
+    uint32 param;
+    
     BabelOpSMsg()
         : PlayerMsg(id, sizeof(*this))
         , op(0)
         , ret(0)
+        , param(0)
     {}
 };
 
@@ -138,6 +140,24 @@ struct BabelTradeInSMsg : public PlayerMsg
     } list[0];
     
     BabelTradeInSMsg()
+        : PlayerMsg(id, sizeof(*this))
+    {}
+
+    uint32 getSize()
+    {
+        return sizeof(*this) + sizeof(list[0]) * count;
+    }
+};
+
+struct BabelAutoFightRewardSMsg : public PlayerMsg
+{
+    enum { id = 0xAC6 };
+
+    uint32 reschgtype;
+    uint32 count;
+    ItemReward list[0];
+    
+    BabelAutoFightRewardSMsg()
         : PlayerMsg(id, sizeof(*this))
     {}
 
