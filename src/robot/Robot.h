@@ -13,6 +13,7 @@ using namespace muduo::net;
 
 typedef void (*robotcmd)();
 typedef std::map<std::string, robotcmd> cmdmap;
+typedef std::function<void (uint32 code, Buffer&)> HandlerCallBack;
 typedef std::function<void (Buffer&, std::string&)> CmdCallBack;
 
 class Client;
@@ -49,20 +50,22 @@ class Robot : boost::noncopyable
     void GatewayStop() { gateway_.disconnect(); }
     
   public :
-    void HandleNULL(Buffer* recvPacket);
-    void HandlerGuestAccountOpcode(Buffer* recvPacket);
-    void HandlerAllZoneListOpcode(Buffer* recvPacket) {}
-    void HandlerRoleListOpcode(Buffer* recvPacket);
-    void HandlerAccountLoginSMsgOpcode(Buffer* recvPacket);
-    
-  public :
     void OpReadCmd();
+    void SetHandlerCallBack(HandlerCallBack cb) { HandlerFunc = cb; }
     void SetExecCmdCallBack(CmdCallBack cb) { ExecCmdFunc = cb; }
     void OpLoginAccount();
     void OpLoginGatewayBySession(const TcpConnectionPtr& conn);
     void OpCreateRole();
     void OpChooseRole();
     void OpSendCmd();
+    void OpStartInput();
+    
+  public :
+    void SetCharId(uint64 charid) { mCharId = charid; }
+    void SetSessAccUid(uint64 accuid);
+    void SetSessAccount(string& account);
+    void SetSessSign(string& sign);
+    void SetDestZone(int zoneid);
     
   public :
     void ApplyAccount(const TcpConnectionPtr& conn);
@@ -90,6 +93,7 @@ class Robot : boost::noncopyable
     Buffer       m_buffer;
     Client*      owner_;
     Thread       mCmdThread;
+    HandlerCallBack HandlerFunc;
     CmdCallBack  ExecCmdFunc;
 
     int64_t      bytesRead_;
@@ -97,7 +101,7 @@ class Robot : boost::noncopyable
     int64_t      messagesRead_;
     std::string       cmd;
     SessionParam m_sess;
-
+    uint16       mDestZone;
     LengthHeaderCodec codec_;
   private :
     uint64 mCharId;

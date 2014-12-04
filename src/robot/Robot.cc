@@ -9,6 +9,7 @@
 using namespace muduo;
 using namespace muduo::net;
 
+extern Handler gHandler;
 void Robot::onAccountConnection(const TcpConnectionPtr& conn)
 {
     if (conn->connected()) {
@@ -47,13 +48,17 @@ void Robot::ApplyAccount(const TcpConnectionPtr& conn)
 void Robot::RequestVerifySession(const TcpConnectionPtr& conn)
 {
     VerifyCMsg msg;
+    m_buffer.append(&msg, sizeof(msg));
+    
+    AllZoneListCMsg zmsg;
+    zmsg.accuid = m_sess.accuid;
+    m_buffer.append(&zmsg, sizeof(zmsg));
+    
     AccountLoginCMsg amsg;
     amsg.accuid = m_sess.accuid;
     amsg.zoneId = 1015;
     strcpy(amsg.accountName, m_sess.account.c_str());
     strcpy(amsg.password,    m_sess.session.c_str());
-    
-    m_buffer.append(&msg, sizeof(msg));
     m_buffer.append(&amsg, sizeof(amsg));
     conn->send(&m_buffer);
 }
@@ -73,8 +78,8 @@ void Robot::run(uint16 Opcode, Buffer* recvPacket)
     char hex[32] = {0};
     dectohex(hex, Opcode);
     LOG_INFO << "MsgId " << hex;
-    OpcodeHandle const& opHandler = tableOpcodes[Opcode];
-    (this->*opHandler.handler)(recvPacket);
+    gHandler.SetRobot(this);
+    HandlerFunc(Opcode, *recvPacket);
 }
 
 void Robot::OpReadCmd()
