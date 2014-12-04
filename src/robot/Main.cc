@@ -1,6 +1,9 @@
 #include "Opcodes.h"
 #include "Client.h"
 
+Handler   gHandler;
+Commander gCommander;
+
 int main(int argc, char** argv) {
     tableOpcodes.BuildOpcodeList();
     tableOpcodes.BuildCmdList();
