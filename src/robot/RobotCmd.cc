@@ -22,7 +22,7 @@ void Robot::OpLoginAccount()
     sendGateway();
 }
 
-void Robot::OpLoginGatewayBySession(const TcpConnectionPtr& conn)
+void Robot::OpLoginGatewayBySession()
 {
     VerifyCMsg vmsg;
     vmsg.taskType = 1;

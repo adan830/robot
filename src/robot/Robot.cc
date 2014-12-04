@@ -17,9 +17,9 @@ void Robot::onAccountConnection(const TcpConnectionPtr& conn)
         LOG_INFO << conn->name() << "onAccountConnection";
 
         if (m_sess.accuid == 0) {
-            ApplyAccount(conn);
+            ApplyAccount();
         } else {
-            RequestVerifySession(conn);
+            ReqAllZoneList();
         }
     }
 }
@@ -29,23 +29,24 @@ void Robot::onGatewayConnection(const TcpConnectionPtr& conn)
     if (conn->connected()) {
         LOG_INFO << conn->name() << "onGatewayConnect";
         conn->setTcpNoDelay(true);
-        OpLoginGatewayBySession(conn);
+        OpLoginGatewayBySession();
     } else {
         owner_->onDisconnect(conn);
     }
 }
 
-void Robot::ApplyAccount(const TcpConnectionPtr& conn)
+void Robot::ApplyAccount()
 {
     VerifyCMsg msg;
     GuestAccountCMsg gmsg;
 
     m_buffer.append(&msg, sizeof(msg));
     m_buffer.append(&gmsg, sizeof(gmsg));
-    conn->send(&m_buffer);
+
+    sendAccount();
 }
 
-void Robot::RequestVerifySession(const TcpConnectionPtr& conn)
+void Robot::ReqAllZoneList()
 {
     VerifyCMsg msg;
     m_buffer.append(&msg, sizeof(msg));
@@ -53,6 +54,14 @@ void Robot::RequestVerifySession(const TcpConnectionPtr& conn)
     AllZoneListCMsg zmsg;
     zmsg.accuid = m_sess.accuid;
     m_buffer.append(&zmsg, sizeof(zmsg));
+
+    sendAccount();
+}
+
+void Robot::RequestVerifySession()
+{
+    VerifyCMsg msg;
+    m_buffer.append(&msg, sizeof(msg));
     
     AccountLoginCMsg amsg;
     amsg.accuid = m_sess.accuid;
@@ -60,7 +69,8 @@ void Robot::RequestVerifySession(const TcpConnectionPtr& conn)
     strcpy(amsg.accountName, m_sess.account.c_str());
     strcpy(amsg.password,    m_sess.session.c_str());
     m_buffer.append(&amsg, sizeof(amsg));
-    conn->send(&m_buffer);
+
+    sendAccount();
 }
 
 void Robot::GetSession()

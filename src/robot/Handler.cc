@@ -49,6 +49,10 @@ void Handler::HandlerAllZoneListOpcode(Buffer& recvPacket)
                  << "\tZoneName : " << ZoneName << "}";
         break;
     }
+
+    if (Count > 0) {
+        mRobot->RequestVerifySession();
+    }
 }
 
 void Handler::HandlerRoleListOpcode(Buffer& recvPacket)

@@ -54,7 +54,7 @@ class Robot : boost::noncopyable
     void SetHandlerCallBack(HandlerCallBack cb) { HandlerFunc = cb; }
     void SetExecCmdCallBack(CmdCallBack cb) { ExecCmdFunc = cb; }
     void OpLoginAccount();
-    void OpLoginGatewayBySession(const TcpConnectionPtr& conn);
+    void OpLoginGatewayBySession();
     void OpCreateRole();
     void OpChooseRole();
     void OpSendCmd();
@@ -66,10 +66,11 @@ class Robot : boost::noncopyable
     void SetSessAccount(string& account);
     void SetSessSign(string& sign);
     void SetDestZone(int zoneid);
-    
+
   public :
-    void ApplyAccount(const TcpConnectionPtr& conn);
-    void RequestVerifySession(const TcpConnectionPtr& conn);
+    void ApplyAccount();
+    void ReqAllZoneList();
+    void RequestVerifySession();
 
     void GetSession();
   private:
