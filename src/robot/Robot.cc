@@ -56,7 +56,7 @@ void Robot::RequestVerifySession(const TcpConnectionPtr& conn)
     
     AccountLoginCMsg amsg;
     amsg.accuid = m_sess.accuid;
-    amsg.zoneId = 1015;
+    amsg.zoneId = mDestZone;
     strcpy(amsg.accountName, m_sess.account.c_str());
     strcpy(amsg.password,    m_sess.session.c_str());
     m_buffer.append(&amsg, sizeof(amsg));
