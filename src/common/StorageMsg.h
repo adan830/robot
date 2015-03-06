@@ -3,6 +3,8 @@
 
 #include <BaseMsg.h>
 #include <DBEntity.h>
+#include <MsgDefine.h>
+#include <MemRoster.h>
 
 CORE_NAMESPACE_START
 
@@ -103,23 +105,6 @@ struct SavePlayerCardMsg: public MsgBase
 	CardProps cardProps;							//卡牌属性
 
 	SavePlayerCardMsg() 
-		: MsgBase(id, sizeof(*this))
-		, playerGuid(0)
-	{
-	}
-};
-
-/**
- * \brief 删除某张角色卡牌
- */
-struct DelPlayerCardMsg: public MsgBase
-{
-	enum{ id = 0x47 };
-
-	playerid_t playerGuid;							//角色唯一ID
-    CardProps cardProps;							//卡牌属性
-
-	DelPlayerCardMsg() 
 		: MsgBase(id, sizeof(*this))
 		, playerGuid(0)
 	{
@@ -359,12 +344,12 @@ struct SaveQuestStatusMsg : public MsgBase
     enum { id = 0x54 };
 
     playerid_t CharId;
-    uint16 count;
+    int count;
     struct {
-        uint16 QuestId;
-        uint16 State;
-        uint32 Value;
-        uint32 Time;
+        int QuestId;
+        int State;
+        int Value;
+        int Time;
     } list[0];
 
     SaveQuestStatusMsg()
@@ -501,7 +486,7 @@ struct SaveBabelPropsMsg : MsgBase
     {}
 };
 
-struct SendHisRankMsg : MsgBase
+struct SaveHisRankMsg : MsgBase
 {
     enum { id = 0x5C };
 
@@ -513,7 +498,7 @@ struct SendHisRankMsg : MsgBase
         uint64 CharId;
     } data[0];
 
-    SendHisRankMsg()
+    SaveHisRankMsg()
         : MsgBase(id, sizeof(*this))
         , count(0)
     {}
@@ -538,7 +523,7 @@ struct SingialMsg : MsgBase
 
 struct NormalShopMsg : MsgBase
 {
-    enum { id = 0x5D };
+    enum { id = 0x5E };
 
     playerid_t CharId;
 
@@ -621,6 +606,322 @@ struct SaveDrawCardDataMsg: public PlayerMsg
     {
 		bzero(data, sizeof(data));
 	}
+};
+
+/**
+ * \brief 保存膜拜信息
+ */
+struct WorshipDataMsg : public PlayerMsg
+{
+    enum { id = 0x62 };
+
+    playerid_t CharId;
+
+    WorshipProps props;
+
+    WorshipDataMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , CharId(0)
+    {}
+};
+
+/**
+ * \brief 保存官爵数据
+ */
+struct SaveOfficerDataMsg : public PlayerMsg
+{
+    enum { id = 0x63 };
+
+    playerid_t CharId;
+
+    OfficerProps props;
+
+    SaveOfficerDataMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , CharId(0)
+    {}
+};
+
+struct ReadSystemMailMsg : public MsgBase
+{
+    enum { id = 0x64 };
+
+    SystemMailProps props;
+
+    ReadSystemMailMsg()
+        : MsgBase(id, sizeof(*this))
+    {}
+};
+
+struct SavePersonalMailProps : public MsgBase
+{
+    enum { id = 0x65 };
+
+    playerid_t CharId;
+
+    PersonalMailProps mProps;
+
+    SavePersonalMailProps()
+        : MsgBase(id, sizeof(*this))
+    {}
+};
+
+struct SavePersonalMail : public MsgBase
+{
+    enum { id = 0x66 };
+
+    playerid_t CharId;
+    
+    PersonalMail mail;
+
+    SavePersonalMail()
+        : MsgBase(id, sizeof(*this))
+    {}
+};
+
+struct DelMineMsg : MsgBase
+{
+	enum { id = 0x68 };
+
+	uint32 count;
+
+	struct tagTarget 
+	{
+		uint16	mineId;
+	} data[0];
+
+	DelMineMsg()
+		: MsgBase(id, sizeof(*this))
+		, count(0)
+	{}
+
+	uint32 getSize()
+	{
+		return sizeof(data[0]) * count + sizeof(*this);
+	}
+
+	static DelMineMsg* create(uint16 count)
+	{
+		// 统计消息的长度
+		uint16 msgSize	= sizeof(DelMineMsg) + sizeof(tagTarget) * count;
+
+		NEW_MSG(DelMineMsg, msgSize);
+		newmsg->size	= msgSize;
+		newmsg->count	= count;
+
+		if(count)
+		{
+			bzero(newmsg->data, sizeof(tagTarget) * count);
+		}
+		return newmsg;
+	}
+};
+
+struct SaveOfficerListMsg : MsgBase
+{
+	enum { id = 0x6a };
+
+	uint32 count;
+
+	struct tagTarget 
+	{
+		uint16	type;					// 官阶的类型
+		uint64	arr[MAX_OFFICER_NUM];	// 获得该官阶的玩家Id
+	} data[0];
+
+	SaveOfficerListMsg()
+		: MsgBase(id, sizeof(*this))
+		, count(0)
+	{}
+
+	uint32 getSize()
+	{
+		return sizeof(data[0]) * count + sizeof(*this);
+	}
+
+	static SaveOfficerListMsg* create(uint16 count)
+	{
+		// 统计消息的长度
+		uint16 msgSize	= sizeof(SaveOfficerListMsg) + sizeof(tagTarget) * count;
+
+		NEW_MSG(SaveOfficerListMsg, msgSize);
+		newmsg->size	= msgSize;
+		newmsg->count	= count;
+
+		if(count)
+		{
+			bzero(newmsg->data, sizeof(tagTarget) * count);
+		}
+		return newmsg;
+	}
+};
+
+struct SaveMartMsg : MsgBase
+{
+	enum { id = 0x6b };
+
+	uint32 count;
+
+	struct tagTarget 
+	{
+		uint32	id;
+		uint32	totalTimes;
+		uint32	overdueTime;
+	} data[0];
+
+	SaveMartMsg()
+		: MsgBase(id, sizeof(*this))
+		, count(0)
+	{}
+
+	uint32 getSize()
+	{
+		return sizeof(data[0]) * count + sizeof(*this);
+	}
+
+	static SaveMartMsg* create(uint16 count)
+	{
+		// 统计消息的长度
+		uint16 msgSize	= sizeof(SaveMartMsg) + sizeof(tagTarget) * count;
+
+		NEW_MSG(SaveMartMsg, msgSize);
+		newmsg->size	= msgSize;
+		newmsg->count	= count;
+
+		if(count)
+		{
+			bzero(newmsg->data, sizeof(tagTarget) * count);
+		}
+		return newmsg;
+	}
+};
+
+struct DelMartMsg : MsgBase
+{
+	enum { id = 0x6c };
+
+	uint32 count;
+
+	struct tagTarget 
+	{
+		uint16	id;
+	} data[0];
+
+	DelMartMsg()
+		: MsgBase(id, sizeof(*this))
+		, count(0)
+	{}
+
+	uint32 getSize()
+	{
+		return sizeof(data[0]) * count + sizeof(*this);
+	}
+
+	static DelMartMsg* create(uint16 count)
+	{
+		// 统计消息的长度
+		uint16 msgSize	= sizeof(DelMartMsg) + sizeof(tagTarget) * count;
+
+		NEW_MSG(DelMartMsg, msgSize);
+		newmsg->size	= msgSize;
+		newmsg->count	= count;
+
+		if(count)
+		{
+			bzero(newmsg->data, sizeof(tagTarget) * count);
+		}
+		return newmsg;
+	}
+};
+
+/**
+ * \brief 保存购买数据
+ */
+struct SaveMartDataMsg : public PlayerMsg
+{
+    enum { id = 0x63 };
+
+	uint64 CharId;
+    uint32 count;
+
+    struct tagTarget
+	{
+		uint32 itemId;
+		uint32 times;
+	} data[0];
+
+    SaveMartDataMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , count(0)
+    {}
+
+	uint32 getSize()
+	{
+		return sizeof(data[0]) * count + sizeof(*this);
+	}
+
+	static SaveMartDataMsg* create(uint16 count)
+	{
+		// 统计消息的长度
+		uint16 msgSize	= sizeof(SaveMartDataMsg) + sizeof(tagTarget) * count;
+
+		NEW_MSG(SaveMartDataMsg, msgSize);
+		newmsg->size	= msgSize;
+		newmsg->count	= count;
+
+		if(count)
+		{
+			bzero(newmsg->data, sizeof(tagTarget) * count);
+		}
+		return newmsg;
+	}
+};
+
+/**
+ *
+ */
+struct SaveWorldBossMsg : public MsgBase
+{
+    enum { id = 0x64 };
+
+    WorldBossInfo boss;
+
+    SaveWorldBossMsg()
+        : MsgBase(id, sizeof(*this))
+    {}
+};
+
+struct ReadWorldBossMsg : public MsgBase
+{
+    enum { id = 0x65 };
+
+    WorldBossInfo boss;
+
+    ReadWorldBossMsg()
+        : MsgBase(id, sizeof(*this))
+    {}
+};
+
+struct ReadMineMsg : public MsgBase
+{
+    enum { id = 0x66 };
+
+    MineProps mine;
+
+    ReadMineMsg()
+        : MsgBase(id, sizeof(*this))
+    {}
+};
+
+struct SaveMineMsg : public MsgBase
+{
+    enum { id = 0x67 };
+
+    MineProps mine;
+
+    SaveMineMsg()
+        : MsgBase(id, sizeof(*this))
+    {}
 };
 #pragma pack(pop)
 

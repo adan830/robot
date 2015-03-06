@@ -1,7 +1,10 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <DBEntity.h>
 #include <BattleMsg.h>
+#include <WorshipMsg.h>
+#include <OfficerMsg.h>
 #include "Commander.h"
 
 void Commander::Op(Buffer& buffer, std::string& cmdstr)
@@ -50,3 +53,18 @@ void Commander::OpDungeonFight(Buffer& buffer)
     buffer.append(&msg, sizeof(msg));
 }
 
+void Commander::OpWorship(Buffer& buffer)
+{
+    WorshipOpCMsg msg;
+    msg.op    = p1;
+    msg.param = p2;
+    buffer.append(&msg, sizeof(msg));
+}
+
+void Commander::OpOfficer(Buffer& buffer)
+{
+    OfficerOpCMsg msg;
+    msg.op    = p1;
+    msg.param = p2;
+    buffer.append(&msg, sizeof(msg));
+}

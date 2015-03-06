@@ -30,6 +30,11 @@ size_t Sessions::size()
     return mSessionMap.size();
 }
 
+bool Sessions::empty()
+{
+    return mSessionMap.empty();
+}
+
 bool Sessions::SaveToFile(uint64 uid, string& account, string& session)
 {
     std::fstream fs;

@@ -67,6 +67,7 @@ void Robot::OpSendCmd()
 
 void Robot::OpStartInput()
 {
-    mCmdThread.start();
+    connected = true;
+//    mCmdThread.start();
 }
 

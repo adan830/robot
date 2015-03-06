@@ -14,6 +14,7 @@ struct QuestListSMsg : public PlayerMsg
 {
     enum { id = 0xA98 };
 
+    int    cd;
     uint16 count;
     struct Quest {
         uint16 id;
@@ -24,6 +25,7 @@ struct QuestListSMsg : public PlayerMsg
     
     QuestListSMsg()
         : PlayerMsg(id, sizeof(*this))
+        , cd(0)
         , count(0)
     {}
 

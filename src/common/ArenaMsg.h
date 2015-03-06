@@ -48,6 +48,7 @@ struct ArenaDataSMsg: public PlayerMsg
 	uint32 prevrank;
     uint32 reward;
     uint32 lasttime;
+    
 	ArenaDataSMsg()
 		: PlayerMsg(id, sizeof(*this))
 		, score(0)
@@ -153,6 +154,36 @@ struct ArenaRewardSMsg : public PlayerMsg
     }
 };
 
+/**
+ * 竞技场对战记录
+ */
+struct ArenaReplaysSMsg : public PlayerMsg
+{
+    enum { id = 0x966 };
+
+    int count;
+    struct Replay {
+        int  ReplayID;       // 战报 ID
+        int  ActiveMode;     // 1 我打别人  2 别人打我
+        int  ChallengeMode;  // 1 挑战      2 欺负
+        int  Ret;            // 结果 0 失败 1 胜利
+        int  PrevRank;       // 我方先前排名
+        int  CurrRank;       // 我方当前排名
+        int  Level;          // 敌方等级
+        char Name[TINYSTR];  // 敌方名字
+        int  Time;           // 时间戳
+    } list[0];
+
+    ArenaReplaysSMsg()
+      : PlayerMsg(id, sizeof(*this))
+        , count(0)
+    {}
+
+    uint32 getSize()
+    {
+        return sizeof(*this) + sizeof(list[0]) * count;
+    }
+};
 #pragma pack(pop)
 
 CORE_NAMESPACE_END

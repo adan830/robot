@@ -68,6 +68,23 @@ struct PlayerCardRevertSMsg : public PlayerMsg
     {}
 };
 
+/**
+ * 卡牌精魄强化等级
+ */
+struct PlayerCardRevertLevelCMsg : public PlayerMsg
+{
+    enum { id = 0xAD4 };
+
+    uint32 slot;
+    uint32 level;
+    
+    PlayerCardRevertLevelCMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , slot(0)
+        , level(0)
+    {}
+};
+    
 #pragma pack(pop)
 
 CORE_NAMESPACE_END

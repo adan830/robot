@@ -38,6 +38,13 @@ enum PropIndex
     PropIndex_PicScroll           = 32, // 残画
     PropIndex_HorseDunEnterCount  = 33, // 战马副本的进入次数
     PropIndex_ScrollDunEnterCount = 34, // 兵书副本的进入次数
+    PropIndex_OfficerLevel        = 35, // 官衔等级
+    PropIndex_MonthCardDays       = 36, // 月卡有效期
+    PropIndex_MonthCardReward     = 37, // 月卡能否领取
+    PropIndex_FriendPoint         = 38, // 侠义点
+    PropIndex_LastDialLevel       = 39, // 最后使用转盘等级
+    PropIndex_WorldBossFighted    = 40, // 世界Boss
+    PropIndex_MineCount           = 41, // 可以抢矿的次数
 };
 
 //卡牌属性类型索引
@@ -54,6 +61,7 @@ enum CardPropIndex
     CARD_PROP_SLOT        = 9,  // 卡牌位置
     CARD_PROP_FIGHTPOS    = 10, // 卡牌在阵法中位置
     CARD_PROP_COSTEXP     = 11, // 累计经验
+    CARD_PROP_APPOINT     = 12, // 卡牌册封
 };
 
 // 资源类型
@@ -75,6 +83,7 @@ enum ResType
     ResType_Scroll          = 13,  //残卷
     ResType_TigerSoul       = 14,  //虎魂
     ResType_PicScroll       = 15,  //残画
+    ResType_FriendPoint     = 16,  //侠义点
     ResType_None            = 100, //道具背包容器大小
 };
 
@@ -117,5 +126,6 @@ enum QuestType
     QuestType_Main    = 1, // 主线任务
     QuestType_Achieve = 2, // 成就任务
     QuestType_Daily   = 3, // 日常任务
+    QuestType_Race    = 4, // 竞速任务
 };
 #endif

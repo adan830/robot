@@ -132,6 +132,29 @@ struct BroadcastMsg : public PlayerMsg
 	/* } */
 };
 
+/**
+ * 操作结果
+ */
+struct OpRetSMsg : public PlayerMsg
+{
+    enum { id = 0x888 };
+
+    uint32 msgid;
+    uint32 ret;
+    int param1;
+    int param2;
+    uint64 CharId;
+    
+    OpRetSMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , msgid(0)
+        , ret(0)
+        , param1(0)
+        , param2(0)
+        , CharId(0)
+    {}
+};
+
 #pragma pack(pop)
 CORE_NAMESPACE_END
 #endif

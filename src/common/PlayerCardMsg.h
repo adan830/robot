@@ -388,6 +388,8 @@ struct PlayerCardDetailSMsg : public PlayerMsg
         uint32 dodge;	  // 躲闪值 1-999999
         uint32 toughness; // 韧性值 1-999999
         uint32 speed;
+        uint32 pPenetration; // 破甲
+        uint32 mPenetration; // 法术穿透
     } list[0];
 
     PlayerCardDetailSMsg()

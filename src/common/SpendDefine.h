@@ -50,6 +50,27 @@ enum ResChgType
     ResChgType_DrawCard			= 43, // 点神兵
     ResChgType_HorseDun         = 44, // 购买战马副本次数
     ResChgType_ScrollDun        = 45, // 购买兵书副本次数
+    ResChgType_RefineCardLevel  = 46, // 利用精魄升级卡牌
+    ResChgType_OfficerApply     = 47, // 爵位晋升
+    ResChgType_OfficerPVP       = 48, // 爵位权斗
+    ResChgType_OfficerWorship   = 49, // 爵位俯首
+    ResChgType_OfficerAward     = 50, // 爵位打赏
+    ResChgType_OfficerPromote   = 51, // 爵位提拔
+    ResChgType_OfficerDemote    = 52, // 爵位贬职
+    ResChgType_OfficerSalary    = 53, // 爵位薪水
+    ResChgType_LevelTurn		= 54, // 等级转盘
+    ResChgType_MailAttach		= 55, // 邮件附件
+    ResChgType_WorldBossRevive  = 56, // 世界Boss复活
+    ResChgType_Encourage        = 57, // 世界Boss鼓舞
+    ResChgType_WorldBossKill    = 58, // 世界Boss击杀
+    ResChgType_WorldBossRank    = 59, // 世界Boss伤害排名
+    ResChgType_WorldBossLuck    = 60, // 世界Boss幸运奖励
+    ResChgType_WorldBossFight   = 61, // 世界Boss战斗
+    ResChgType_Mart             = 62, // 抢矿
+    ResChgType_BeenWorship      = 63, // 被人俯首
+    ResChgType_MonthCard        = 64, // 购买月卡
+    ResChgType_Appoint          = 64, // 册封
+    ResChgType_Init             = 1000, // 初始化
 };
 
 #endif

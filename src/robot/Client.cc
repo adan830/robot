@@ -36,7 +36,7 @@ Client::Client(EventLoop* loop,
                                              std::placeholders::_2));
         // 如果本地存在 Session，就不需要连接
         // Account
-        if (tableSessions.size() > 0) {
+        if (!tableSessions.empty()) {
             pRobot->GetSession();
         }
         pRobot->AccountConnect();

@@ -2,6 +2,7 @@
 #define __NXCORE_CHATMSG__
 
 #include <MsgDefine.h>
+#include <DBEntity.h>
 #ifndef __SGROBOT__
 #include <MemRoster.h>
 #endif
@@ -43,11 +44,11 @@ struct ResponseChatDataSMsg: public PlayerMsg
 {
     enum { id = 0x951};
 
-	uint8 chatType;				//见 enum ChatType
-	uint32 lastChatTime;		//最后发送聊天的时间
-	uint32 freeChatTimes;		//剩余免费聊天次数
-	bool newchat;				//有新私聊
-	uint8 count;				//聊天内容条数
+	int chatType;        //见 enum ChatType
+	int lastChatTime;    //最后发送聊天的时间
+	int freeChatTimes;   //剩余免费聊天次数
+	int newchat;         //有新私聊
+	int count;           //聊天内容条数
 	struct ChatRecord
 	{
 		uint64 senderGuid;				//发送者GUID
@@ -198,6 +199,43 @@ struct UpdateChatStatusSMsg: public PlayerMsg
 	}
 };
 
+struct WorldNoticeSMsg : public PlayerMsg
+{
+    enum { id = 0x958 };
+
+    WorldNoticeProps notice;
+    
+    WorldNoticeSMsg()
+        : PlayerMsg(id, sizeof(*this))
+    {}
+};
+
+struct MulWorldNoticeSMsg : public PlayerMsg
+{
+    enum { id = 0x959 };
+
+    int count;
+    WorldNoticeProps notice[0];
+    
+    MulWorldNoticeSMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , count(0)
+    {}
+
+    int getSize()
+    {
+        return sizeof(*this) + count * sizeof(notice[0]);
+    }
+};
+
+struct ReqWorldNoticeCMsg : public PlayerMsg
+{
+    enum { id = 0x95A };
+
+    ReqWorldNoticeCMsg()
+        : PlayerMsg(id, sizeof(*this))
+    {}
+};
 #pragma pack(pop)
 
 CORE_NAMESPACE_END

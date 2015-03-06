@@ -1,5 +1,7 @@
 #ifndef __LOCAL_ALGORITHM_H__
 #define __LOCAL_ALGORITHM_H__
+
+#include <vector>
 #include "Base.h"
 void StrToLower(char * str)
 {
@@ -51,9 +53,32 @@ bool NeedUpdate(int clock, int currtime, int prevtime)
 }
 
 // 按范围取值
-int RangeValue(int val, int min, int max) {
+int RangeValue(int val, int min, int max)
+{
     if (val < min) return min;
     if (val > max) return max;
     return val;
 }
+
+void randelem(std::vector<int>& vect, int m, int n, int seed)
+{
+    if (n > m) {
+        n = m;
+    }
+
+    int r = 0, i = 0;
+    srand(seed);
+    while (n > 0) {
+        r = rand() % m + 1;
+        if (r <= n) {
+            vect.push_back(i);
+            n--;
+        }
+        i++;
+        m--;
+    }
+}
+
 #endif
+
+

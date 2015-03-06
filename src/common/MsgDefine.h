@@ -7,6 +7,10 @@ CORE_NAMESPACE_START
 
 class Task;
 
+#ifdef WIN32
+#define bzero(a, b) memset((a), 0, (b))
+#endif
+
 #define MSG_HANDLER_SIZE 0x1000
 
 typedef void (*msg_handler_t)(void*, Task*);

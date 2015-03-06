@@ -28,6 +28,7 @@ class Sessions
     bool GetSession(SessionParam& sess);
     void RemoveSession(string& account);
     size_t size();
+    bool empty();
     bool SaveToFile(uint64 uid, string& account, string& session);
     bool InitFromFile();
     

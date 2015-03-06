@@ -67,7 +67,9 @@ typedef char CHAR;
 #define siArenaRankRewardTable Singleton<DataTable<ArenaRankRewardBase> >::getInstance()
 #define siAchievementTable Singleton<DataTable<AchievementBase> >::getInstance()
 #define siArenaRobotTable Singleton<DataTable<ArenaRobotBase> >::getInstance()
-
+#define siTopUpTable Singleton<DataTable<TopUpBase> >::getInstance()
+#define siGrabMineTable Singleton<DataTable<GrabMineBase> >::getInstance()
+#define siLandingRewardTable Singleton<DataTable<LandingRewardBase> >::getInstance()
 
 ///~RESOURCE_TABLE_DEFINE_END
 
@@ -269,6 +271,12 @@ struct SkillEffectBase
 				return false;
 			}
 		}
+#ifdef __DEBUG__
+        if (ID == 30060)
+        {
+            StrikePer = 10000;
+        }
+#endif
 		return true;                    
 	}
 	bool check()              {return true;                    }
@@ -341,6 +349,7 @@ struct SkillBase
 	size_t getExtSize() {return sizeof(ExtCells);}
 
 	bool parse(ExtCells* ext) {
+        DEBUG_LOG("SkillTable ID %u\n", getId());
         bzero(targetEffects, sizeof(targetEffects));
         if(ext->target1)
         {
@@ -401,8 +410,8 @@ struct SkillBase
         }
 		
         if (ext->target2Effect)
-        {
-            targetEffects[1].pEffects[0] = siSkillEffectTable.find(ext->target2Effect);
+        { 
+           targetEffects[1].pEffects[0] = siSkillEffectTable.find(ext->target2Effect);
 #ifndef __DEBUG__
             if (!targetEffects[1].pEffects[0])
             {
@@ -656,7 +665,7 @@ struct CardBase
 	SkillBase* pSkillBase;
     SkillBase* pActSkillBase[MAX_SKILL_UNLOCK_COUNT];		//主动技能解锁
     StaticSkillBase* pUnActSkillBase[MAX_PSKILL_UNLOCK_COUNT];		//被动技能解锁
-    SkillBase* pTriggerSkillBase[MAX_SKILL_UNLOCK_COUNT];		// 战斗中触发的被动
+    SkillBase* pTriggerSkillBase[MAX_PSKILL_UNLOCK_COUNT];		// 战斗中触发的被动
     
     ComradeBase* pCombo[MAX_COMBO_SKILL];
     
@@ -865,9 +874,9 @@ struct FormationBase
 
 	struct ItemDetail
 	{
-		uint8 pos;			//阵法位置
-		uint8 param;		//战斗属性索引
-		uint8 value;		//属性值百分比
+		uint8 pos;   //阵法位置
+		uint8 param; //战斗属性索引
+		uint8 value; //属性值百分比
 	};
 	VECTOR_CONTAINER(ItemDetail) itemDetails;
 	struct ExtCells {
@@ -1234,7 +1243,7 @@ struct BigLevelBase
 		char smallLevelStr[200];		//小关卡
 	};
     
-    uint8 weekdays[7];
+    uint8 weekdays[8];
     uint32 starttime;
     uint32 endtime;
     
@@ -1253,7 +1262,7 @@ struct BigLevelBase
             for (int i = 0; i < int(wds.size()); ++i)
             {
                 int wd = wds[i];
-                if (wd < 7 && wd >= 0)
+                if (wd <= 7 && wd >= 0)
                 {
                     weekdays[wd] = 1;
                 }
@@ -1658,7 +1667,6 @@ struct ArenaWeekRewardBase
 	WORD	maxRank;	//周排行奖励最大名次
 	WORD	lootId;	//掉落1
 
-
 	struct ExtCells
 	{
 
@@ -1701,10 +1709,10 @@ struct MissionBase
     WORD Level;
     BYTE requireType;
     WORD requireCond;
-    DWORD requireParam;
+    int requireParam;
     BYTE rewardType;
     WORD rewardID;
-    DWORD rewardParam;
+    int rewardParam;
     WORD prevID;
     WORD nextID;
     WORD point;
@@ -1732,12 +1740,12 @@ struct AchievementBase
     DWORD ID;
     BYTE  rewardType;
     WORD  rewardID;
-    DWORD rewardParam;
+    int   rewardParam;
 
     LootTrade tradein;
 
-    static uint32 StartID;
-    static uint32 FinishID;
+    static int StartID;
+    static int FinishID;
     
     struct ExtCells {};
 	KEY_TYPE getId()          {return ID;            }
@@ -1748,7 +1756,7 @@ struct AchievementBase
             StartID = ID;
         }
 
-        if (ID > FinishID) {
+        if (ID > static_cast<uint32>(FinishID)) {
             FinishID = ID;
         }
         LootItem item;
@@ -2442,7 +2450,370 @@ struct LuckyDrawBaseBase
 	
 };
 
+//OpenTime表结构定义
+#define siOpenTimeTable Singleton<DataTable<OpenTimeBase> >::getInstance()
+struct OpenTimeBase
+{
+	typedef WORD KEY_TYPE;
+	
+	WORD	ID;						//世界BOSS ID
+	WORD	OpenDate;				//开放日期(填一周的日期）
+	WORD	AnTime;					//单次开放时间（分钟）
 
+	//Helper::ArrayBuffer<uint16> OpenTime1;
+	//Helper::ArrayBuffer<uint16> OpenTime2;
+	DWORD	OpenTime1;
+    DWORD   EndTime1;
+    
+	DWORD	OpenTime2;
+    DWORD   EndTime2;
+    
+	struct ExtCells
+	{
+		CHAR	OpenTime1[50];			//开放时间1（24小时制）
+		CHAR	OpenTime2[50];			//开放时间2（24小时制）
+	};
+
+	KEY_TYPE getId()
+	{
+		return OpenDate;
+	}
+
+	size_t getFixSize()
+	{
+		return ((char*)&AnTime - (char*)this) + sizeof(AnTime);
+	}
+
+	size_t getExtSize()
+	{
+		return sizeof(ExtCells);
+	}
+
+	bool parse(ExtCells* ext)
+	{
+        //Helper::splitInto(OpenTime1, ext->OpenTime1, ":");
+        //Helper::splitInto(OpenTime2, ext->OpenTime2, ":");
+
+		Helper::ArrayBuffer<uint16> abuf1;
+        Helper::splitInto(abuf1, ext->OpenTime1, "-");
+		if(abuf1.size() > 1)
+		{
+			OpenTime1 = 3600U*abuf1[0] + 60 * abuf1[1];
+		}
+		else
+		{
+			OpenTime1 = 0;
+		}
+
+		Helper::ArrayBuffer<uint16> abuf2;
+		Helper::splitInto(abuf2, ext->OpenTime2, "-");
+		if(abuf2.size() > 1)
+		{
+			OpenTime2 = 3600U*abuf2[0] + 60 * abuf2[1];
+		}
+		else
+		{
+			OpenTime2 = 0;
+		}
+
+        EndTime1 = OpenTime1 + 60 * AnTime;
+        EndTime2 = OpenTime2 + 60 * AnTime;
+        
+		DEBUG_LOG("OpenTimeTable: %u open:%s(%u) %s(%u)\n",
+                  getId(), ext->OpenTime1, OpenTime1, ext->OpenTime2, OpenTime2);
+		return true;
+	}
+
+	bool check()
+	{
+		return true;
+	}
+	
+};
+
+//HurtRanking表结构定义
+#define siHurtRankingTable Singleton<DataTable<HurtRankingBase> >::getInstance()
+struct HurtRankingBase
+{
+	typedef WORD KEY_TYPE;
+	
+	WORD	minRank;				//活动结束最小排名
+	WORD	maxRank;				//活动结束最大排名 （0为无限制）
+	WORD	lootID;					//BOSS对应排行奖励（对应掉落表）
+
+
+	struct ExtCells
+	{
+
+	};
+
+	KEY_TYPE getId()
+	{
+		return minRank;
+	}
+
+	size_t getFixSize()
+	{
+		return sizeof(*this);
+	}
+
+	size_t getExtSize()
+	{
+		return 0;
+	}
+
+	bool parse(ExtCells* ext)
+	{
+		DEBUG_LOG("HurtRankingTable: %u\n", getId());
+		return true;
+	}
+
+	bool check()
+	{
+		return true;
+	}
+	
+};
+
+//BossInformation表结构定义
+#define siBossInformationTable Singleton<DataTable<BossInformationBase> >::getInstance()
+struct BossInformationBase
+{
+	typedef WORD KEY_TYPE;
+	
+	WORD	ID;						//世界BOSS ID
+	WORD	cardID;					//BOSS卡牌ID（对应卡牌表的卡牌ID）
+    DWORD   sceneID;                // 关卡ID
+    DWORD   FinalSceneID;           // 最后一击关卡ID
+	BYTE	Type;					//特殊攻击条件类型1： 0.为无此条件 Ø
+                                    //1.魏国武将对BOSS伤害增加 Ø
+                                    //2.蜀国武将对BOSS伤害增加 Ø
+                                    //3.吴国武将对BOSS伤害增加 Ø
+                                    //4.群雄武将对BOSS伤害增加 Ø 
+	WORD	Param1;					//伤害百分比（具体数值1~100）
+	BYTE	Type2;					//特殊攻击条件类型2： Ø0.为无此条件  Ø 1.女性武将对BOSS伤害增加    2.男性武将对boss伤害增加
+	WORD	Param2;					//伤害百分比（具体数值）
+	WORD	lootID1;				//单次攻击奖励（对应掉落表）
+	WORD	lootID2;				//击杀奖励（对应掉落表）
+	WORD	lootID3;				//幸运奖励（对应掉落表，随机发放10人）
+
+	struct ExtCells
+	{
+		CHAR	lootDes[2048];			//等级（BOSS等级随开服时间上升）
+	};
+
+	struct LevelupInfo
+	{
+		uint16 OpenDay1;
+		uint16 OpenDay2;
+		uint16 Level;
+	};
+
+	VECTOR_CONTAINER(LevelupInfo) LevelupConfig;
+
+	KEY_TYPE getId()
+	{
+		return ID;
+	}
+
+	size_t getFixSize()
+	{
+		return ((char*)&lootID3 - (char*)this) + sizeof(lootID3);
+	}
+
+	size_t getExtSize()
+	{
+		return sizeof(ExtCells);
+	}
+
+	bool parse(ExtCells* ext)
+	{
+		Helper::ArrayBuffer<std::string> abuf;
+		Helper::splitInto(abuf, ext->lootDes, "|");
+		for(uint32 i=0; i<abuf.size(); ++i)
+		{
+			Helper::ArrayBuffer<uint16> abuf2;
+			Helper::splitInto(abuf2, abuf[i], ",");
+			if(abuf2.size() == 3)
+			{
+				LevelupInfo info;
+				info.OpenDay1 = abuf2[0];
+				info.OpenDay2 = abuf2[1];
+				info.Level = abuf2[2];
+				LevelupConfig.push_back(info);
+				TRACE_LOG("\topenday: %u ~ %u level: %u\n", abuf2[0], abuf2[1], abuf2[2]);
+			}
+			else
+			{
+				ERROR_LOG("BossInformationTable: %u Levelup config error.\n", getId());
+			}
+		}
+		DEBUG_LOG("BossInformationTable: %u\n", getId());
+		return true;
+	}
+
+	bool check()
+	{
+		return true;
+	}
+	
+};
+
+#define siBossLevelTable Singleton<DataTable<BossLevelBase> >::getInstance()
+struct BossLevelBase
+{
+    typedef WORD KEY_TYPE;
+
+    DWORD ID;
+    DWORD Level;
+    
+	struct ExtCells {};
+	KEY_TYPE getId()          {return ID;            }
+	size_t getFixSize()       {return sizeof(*this); }
+	size_t getExtSize()       {return 0;             }
+	bool parse(ExtCells* ext) {
+        TRACE_LOG("BossLevelTable %u %u\n", ID, Level);
+        return true;
+    }
+	bool check()              {return true;          }
+};
+/**
+ * \brief LevelTurn表结构定义
+ */
+#define siLevelTurnTable Singleton<DataTable<LevelTurnBase> >::getInstance()
+struct LevelTurnBase
+{
+	typedef DWORD KEY_TYPE;
+	
+	DWORD	level;					//转盘开启等级
+	DWORD	nextlevel;				//下次开启等级
+	WORD	lootID;					//奖励物品，对应掉落表
+
+	static DWORD MinLevel;					//最小等级
+
+	struct ExtCells
+	{
+
+	};
+
+	KEY_TYPE getId()
+	{
+		return level;
+	}
+
+	size_t getFixSize()
+	{
+		return sizeof(*this);
+	}
+
+	size_t getExtSize()
+	{
+		return 0;
+	}
+
+	bool parse(ExtCells* ext)
+	{
+		if(level < MinLevel)
+		{
+			MinLevel = level;
+		}
+		DEBUG_LOG("LevelTurnTable: %u\n", getId());
+		return true;
+	}
+
+	bool check()
+	{
+		return true;
+	}
+	
+};
+
+struct TopUpBase
+{
+    typedef WORD KEY_TYPE;
+
+    WORD ID;
+    WORD Price;
+    WORD IsMonthCard;
+    WORD GoldDaily;
+    WORD Validity;
+    WORD GoldOnece;
+    WORD ExtraGold;
+    WORD BuyLimit;
+    WORD GoldLimit;
+    WORD ExtraGoldLimit;
+    
+	struct ExtCells {};
+	KEY_TYPE getId()          {return ID;            }
+	size_t getFixSize()       {return sizeof(*this); }
+	size_t getExtSize()       {return 0;             }
+	bool parse(ExtCells* ext) {return true;          }
+	bool check()              {return true;          }
+};
+
+/**
+ * \brief GrabMine表结构定义
+ */
+struct GrabMineBase
+{
+	typedef DWORD KEY_TYPE;
+
+	DWORD	ID;				// id
+	DWORD	minearea;		// 矿区1普通2高级
+	DWORD	number;			// 页数
+	DWORD	minestation;	// 矿的位置
+	DWORD	minetype;		// 位置1矿类型1铁矿2铜矿3银矿4金矿
+	DWORD	reward;			// 每小时铜币产量
+
+	struct ExtCells
+	{
+
+	};
+
+	KEY_TYPE getId()
+	{
+		return ID;
+	}
+
+	size_t getFixSize()
+	{
+		return sizeof(*this);
+	}
+
+	size_t getExtSize()
+	{
+		return 0;
+	}
+
+	bool parse(ExtCells* ext)
+	{
+		//DEBUG_LOG("GrabMineTable: %u\n", getId());
+		return true;
+	}
+
+	bool check()
+	{
+		return true;
+	}
+
+};
+
+struct LandingRewardBase
+{
+    typedef DWORD KEY_TYPE;
+
+    DWORD ID;
+    DWORD LootID;
+
+	struct ExtCells {};
+	KEY_TYPE getId()          {return ID;            }
+	size_t getFixSize()       {return 8;             }
+	size_t getExtSize()       {return 0;             }
+	bool parse(ExtCells* ext) {
+        return true;
+    }
+	bool check()              {return true;          }
+};
 
 //
 // 供人复制用的一段代码，请保留
@@ -2477,4 +2848,4 @@ struct SampleBase
 #pragma pack(pop)
 
 #endif//__NXCORE_RESOURCE__
-
+ 

@@ -11,6 +11,7 @@ enum
     ARENAOP_CLEARCD      = 5, //清楚冷却CD
     ARENAOP_RANK         = 6, //竞技场排名
     ARENAOP_RANK_HIS     = 7, //竞技场昨日排名
+    ARENAOP_REPLAYS      = 8, //竞技场对战记录
 };
 #endif
 

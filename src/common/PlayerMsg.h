@@ -20,6 +20,11 @@ CORE_NAMESPACE_START
 #include "RoleMsg.h"
 
 /**
+ * \brief 世界Boss 消息 ID : 0x920 ~ 0x92F
+ */
+//#include "WorldBossMsg.h"
+
+/**
  * \brief 聊天消息定义 消息ID: 0x930 ~ 0x93F
  */
 #include "DrawCardMsg.h"
@@ -107,6 +112,45 @@ CORE_NAMESPACE_START
  */
 //#include "MeltMsg.h"
 
+/**
+ * \brief 膜拜 消息ID: 0xAE0 ~ 0xAEF
+ */
+//#include "WorshopMsg.h"
+
+/**
+ * \brief 爵位 消息ID: 0xAF0 ~ 0xAFF
+ */
+//#include "OfficerMsg.h"
+
+/**
+ * \brief 邮件系统 消息ID: 0xB00 ~ 0xB00
+ */
+//#include "MailMsg.h"
+
+/**
+ * \brief 战报系统 消息ID:0xB10 ~ 0xB1F
+ */
+//#include "ReplaysMsg.h"
+
+/**
+ * \brief 助战系统 消息ID:0xB20 ~ 0xB2F
+ */
+//#include "AssistMsg.h"
+
+/**
+ * \brief 挖矿系统 消息ID:0xB30 ~ 0xB3F
+ */
+#include "MineRobMsg.h"
+
+/**
+ * \brief 限购系统 消息ID:0xB40 ~ 0xB4F
+ */
+#include "MartMsg.h"
+
+/**
+ * \brief 册封系统 消息ID:0xB50 ~ 0xB5F
+ */
+#include "AppointMsg.h"
 #pragma pack(push, 1)
 
 

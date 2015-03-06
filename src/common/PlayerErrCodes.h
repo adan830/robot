@@ -162,6 +162,81 @@ enum
     MELT_EQUIP_NOTEXIST      = 603, // 该槽位没有装备
     MELT_EQUIP_TAKING        = 604, // 已经穿上的装备不能被炼化
     MELT_EQUIP_NONMELT       = 605, // 该装备天生不能被炼化
-    REBORN_BAG_ISFULL        = 606  // 背包已满，不能进行卡牌重生
+    REBORN_BAG_ISFULL        = 606, // 背包已满，不能进行卡牌重生
+    MELT_CARD_LESS_GOLD      = 606, // 元宝不足，不能进行卡牌重生
+    MELT_EQUIP_LESS_GOLD     = 607, // 元宝不足，不能进行卡牌重生
+};
+
+enum
+{
+	OFFICER_PLAYER_NOT_EXIST			= 700, // 无效的目标玩家
+	OFFICER_PLAYER_LESS_LEVEL			= 701, // 等钱玩家等级不够晋升
+	OFFICER_PLAYER_FIGHTED				= 702, // 已经对该玩家权斗过
+	OFFICER_PLAYER_AWARDED				= 703, // 已经对该玩家赏赐过
+	OFFICER_PLAYER_WORSHIPED			= 704, // 已经对该玩家俯首过
+	OFFICER_PLAYER_PROTECT_CD			= 705, // 晋升/降级挑战保护时间中
+	OFFICER_PLAYER_FAIL_CD				= 706, // 晋升挑战失败CD时间中
+	OFFICER_PLAYER_NOT_IN_LIST			= 707, // 玩家已经不在当前的官阶中
+	OFFICER_PLAYER_DEMOTE_CD			= 708, // 贬职的CD时间中
+};
+
+enum
+{
+    MAIL_NOT_EXIST = 800, // 邮件不存在
+    MAIL_IS_EMPTY  = 801, // 邮件附件已经领取
+    MAIL_BAG_FULL  = 802, // 背包已满，不能领取附件
+};
+
+enum
+{
+    MONTH_CARD_EXPIRE   = 900,
+    MONTH_CARD_REWARDED = 901,
+};
+
+enum
+{
+    WORLD_BOSS_IN_CD               = 1000,
+    WORLD_BOSS_NON_NEED_REVIVE     = 1001,
+    WORLD_BOSS_LESS_GOLD_REVIVE    = 1002,
+    WORLD_BOSS_ENCOURAGE           = 1003,
+    WORLD_BOSS_LESS_MONEY_ENCOURAGE = 1004,
+    WORLD_BOSS_LESS_GOLD_ENCOURAGE  = 1005,
+};
+
+enum
+{
+	MART_ITEM_NOT_EXIST			= 1100,	// 非法道具
+	MART_ITEM_OVERDUE			= 1101,	// 道具已经下架
+	MART_ITEM_MAX_TIMES			= 1102,	// 已经达到个人购买的上限
+	MART_ITEM_MAX_TOTAL_TIMES	= 1103,	// 道具已经售罄
+	MART_ITEM_NEED_MONEY		= 1110,	// 铜钱不足
+	MART_ITEM_NEED_GOLD			= 1111,	// 元宝不足
+};
+
+enum
+{
+	MINE_INVALID				= 1200,	// 非法的矿
+	MINE_SELF_OCCUPY_EXIST		= 1201,	// 你已经占领了1个矿，不能重复占领
+	MINE_OTHER_OCCUPY_EXIST		= 1202,	// 该矿不为空，已经被人占领
+	MINE_NEED_STAMINA			= 1203,	// 体力不够
+	MINE_NEED_GOLD				= 1204,	// 元宝不够
+	MINE_NO_OCCUPY				= 1205,	// 矿没有被玩家占领，请直接占领该矿
+	MINE_DUMP_OCCUPY			= 1206,	// 你已经占领了该矿，不能重复占领
+	MINE_DELAY_SELF_ONLY		= 1207,	// 你只能延长自己占有矿的时间
+	MINE_ABANDOM_SELF_ONLY		= 1208,	// 你只能取消自己占有矿
+	MINE_FIND_NONE				= 1209,	// 找不到指定类型的空旷
+};
+
+enum
+{
+    LOGIN_SEVEN_BAG_FULL       = 1300, // 七日登录礼无法领取
+};
+
+enum
+{
+    CHAT_CONTENT_EMPTY    = 1400,
+    CHAT_LOW_LEVEL        = 1401,
+    CHAT_LESS_GOLD        = 1402,
+    
 };
 #endif

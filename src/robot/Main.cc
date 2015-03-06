@@ -14,13 +14,13 @@ int main(int argc, char** argv) {
         InetAddress account("221.228.205.91", 9002);
         InetAddress gateway("221.228.205.91", 11002);
     
-        Client client(&loop, account, gateway, 1, 10, 2);
+        Client client(&loop, account, gateway, 2, 10, 1);
         loop.loop();
     } else {
         InetAddress account("192.168.0.243", 6668);
         InetAddress gateway("192.168.0.243", 6607);
     
-        Client client(&loop, account, gateway, 1, 10, 2);
+        Client client(&loop, account, gateway, 1, 10, 1);
         loop.loop();
     }
     

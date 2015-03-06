@@ -29,13 +29,15 @@ class Robot : boost::noncopyable
       : account_(loop, AccountServer, name),
         gateway_(loop, GatewayServer, name),
         owner_(owner),
-        mCmdThread(boost::bind(&Robot::OpReadCmd, this), "CmdThread"),
+        mCmdThread(boost::bind(&Robot::ReqFight, this), "CmdThread"),
         bytesRead_(0),
         bytesWritten_(0),
         messagesRead_(0),
         codec_(boost::bind(&Robot::onPlayerMsg, this, _1, _2, _3, _4)),
-        mCharId(0)
+        mCharId(0),
+        connected(false)
     {
+        loop->runEvery(1, boost::bind(&Robot::ReqFight, this));
         account_.setConnectionCallback(boost::bind(&Robot::onAccountConnection, this, _1));
         account_.setMessageCallback(boost::bind(&LengthHeaderCodec::onMessage, &codec_, _1, _2, _3));
         
@@ -71,7 +73,8 @@ class Robot : boost::noncopyable
     void ApplyAccount();
     void ReqAllZoneList();
     void RequestVerifySession();
-
+    void ReqFight();
+    
     void GetSession();
   private:
     void run(uint16 Opcode, Buffer* recvPacket);
@@ -106,6 +109,7 @@ class Robot : boost::noncopyable
     LengthHeaderCodec codec_;
   private :
     uint64 mCharId;
+    bool connected;
 };
 
 #endif

@@ -4,11 +4,17 @@
 enum BattleType
 {
 	BATTLE_PVP					= 0,
-	BATTLE_SCENE_MONSTER		= 1,   // 场景打怪
-    BATTLE_DUNGEON              = 2,   // 副本战斗
-    BATTLE_BABEL                = 3,   // 通天塔
+	BATTLE_SCENE_MONSTER		= 1,	// 场景打怪
+    BATTLE_DUNGEON              = 2,	// 副本战斗
+    BATTLE_BABEL                = 3,	// 通天塔
+    BATTLE_OFFICER_MONSTER      = 4,	// 官衔挑战怪物
+    BATTLE_WORLD_BOSS           = 5,	// 世界Boss
     
-    BATTLE_ARENA                = 100, // 竞技场
+    BATTLE_ARENA                = 100,	// 竞技场
+    BATTLE_OFFICER_PLAYER       = 101,	// 官衔挑战玩家
+    BATTLE_OFFICER_FIGHT        = 102,	// 官衔权斗
+
+	BATTLE_MINE					= 110,	// 挖矿战斗
 };
 
 enum PVPType

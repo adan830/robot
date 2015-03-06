@@ -4,6 +4,8 @@
 #include "Client.h"
 #include "Robot.h"
 #include <AccountMsg.h>
+#include <RoleMsg.h>
+#include <BattleMsg.h>
 #include "Misc.hpp"
 
 using namespace muduo;
@@ -71,6 +73,30 @@ void Robot::RequestVerifySession()
     m_buffer.append(&amsg, sizeof(amsg));
 
     sendAccount();
+}
+
+void Robot::ReqFight()
+{
+    if (!connected)
+        return;
+    
+    PlayerGMCMsg gmmsg;
+    strcpy(gmmsg.gm, "n");
+    m_buffer.append(&gmmsg, sizeof(gmmsg));
+
+//    strcpy(gmmsg.gm, "csa");
+//    m_buffer.append(&gmmsg, sizeof(gmmsg));
+
+//    strcpy(gmmsg.gm, "esa");
+//    m_buffer.append(&gmmsg, sizeof(gmmsg));
+
+    DungeonFightCMsg fightmsg;
+    fightmsg.dungeon = 1010;
+    fightmsg.hard = 1;
+    fightmsg.mode = 1;
+    m_buffer.append(&fightmsg, sizeof(fightmsg));
+
+    sendGateway();
 }
 
 void Robot::GetSession()

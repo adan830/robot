@@ -90,6 +90,7 @@ struct FriendListSMsg: public PlayerMsg
 		uint32 loginTime;		//登录时间
 		uint8  giveSp;			//赠送体力标志1可赠送 2已经赠送
 		uint8 getSp;			//领取体力标志0无，1可领取，2已经领取
+        int AssistTime;         //助战时间戳
 	}data[0];
 
 	FriendListSMsg()
@@ -99,7 +100,7 @@ struct FriendListSMsg: public PlayerMsg
 	}
 	uint32 getSize()
 	{
-		return sizeof(*this) + sizeof(data[0])*count;
+		return sizeof(*this) + sizeof(data[0]) * count;
 	}
 };
 

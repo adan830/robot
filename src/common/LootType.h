@@ -38,6 +38,7 @@ enum LootType
     LootType_PicScroll       = 25,  //残画
     LootType_SoulStone       = 26,  //灵石
     LootType_SoulRefined     = 27,  //精魄
+    LootType_FriendPoint     = 28,  //侠义点
     LootType_Null			 = 255, //空
 };
 
@@ -197,6 +198,9 @@ struct LootTrade
         if (loottype == LootType_SoulRefined)
             return ResType_SoulRefined;
 
+        if (loottype == LootType_FriendPoint)
+            return ResType_FriendPoint;
+
         return ResType_Unknow;
     }
     
@@ -257,6 +261,9 @@ struct LootTrade
 
         if (restype == ResType_SoulRefined)
             return LootType_SoulRefined;
+
+        if (restype == ResType_FriendPoint)
+            return LootType_FriendPoint;
 
         return LootType_None;
     }

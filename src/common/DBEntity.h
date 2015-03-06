@@ -1,8 +1,8 @@
 #ifndef __NXCORE_DBENTITY__
 #define __NXCORE_DBENTITY__
-
+#ifndef __SGROBOT__
 USING_NXCORE
-
+#endif
 #include <Define.h>
 #include <PropsDefine.h>
 
@@ -60,6 +60,7 @@ struct PlayerBaseProperties
     uint32 scroll;
     uint32 tigersoul;
     uint32 picscroll;
+    uint32 friendpoint;
     uint32 recharged;
 	uint32 level;
     uint32 viplevel;
@@ -76,19 +77,25 @@ struct PlayerBaseProperties
     uint32 equipPkgSize;
 
     uint32 virgin;
+    uint32 officerlevel;
+	uint32 lastTurnLevel; //等级抽奖的最后等级
+    uint32 MonthCardTime; // 月卡过期时间
+    uint32 MonthCardReward; // 月卡领取标志
     
-	PlayerBaseProperties()
+    PlayerBaseProperties()
         : uid(0)
         , state(0)
         , money(0)
         , gold(0)
         , arenapoint(0)
+        , renown(0)
         , soulstone(0)
         , soulrefined(0)
         , horsesoul(0)
         , scroll(0)
         , tigersoul(0)
         , picscroll(0)
+        , friendpoint(0)
         , recharged(0)
         , level(1)
         , viplevel(0)
@@ -102,9 +109,13 @@ struct PlayerBaseProperties
         , cardPkgSize(0)
         , equipPkgSize(0)
         , virgin(0)
-	{
-        bzero(charName, sizeof(charName));
-	}
+        , officerlevel(0)
+        , lastTurnLevel(0)
+        , MonthCardTime(0)
+        , MonthCardReward(0)
+        {
+            bzero(charName, sizeof(charName));
+        }
 
     void clear() {
         money        = 0;
@@ -130,6 +141,11 @@ struct PlayerBaseProperties
         equipPkgSize = 50;
 
         virgin       = 0;
+
+        officerlevel = 0;
+        lastTurnLevel = 0;
+        MonthCardTime = 0;
+        MonthCardReward = 0;
     }
 };
 
@@ -138,9 +154,9 @@ struct PropChange {
     PropIndex propId;
     uint32    propValue;
     
-    PropChange(Oper _oper, PropIndex _propId, uint32 _propValue)
-        : oper(_oper)
-        , propId(_propId)
+PropChange(Oper _oper, PropIndex _propId, uint32 _propValue)
+: oper(_oper)
+, propId(_propId)
         , propValue(_propValue)
         {}
 };
@@ -153,10 +169,10 @@ struct PlayerCardProps
 {
 	uint16 pos[MAX_FIGHT_POS_COUNT];
 	PlayerCardProps()
-	{
-		bzero(pos, sizeof(pos));
-		pos[0] = 1;
-	}
+        {
+            bzero(pos, sizeof(pos));
+            pos[0] = 1;
+        }
 };
 
 struct PlayerDailyGachaProps
@@ -165,13 +181,13 @@ struct PlayerDailyGachaProps
 	uint32 dailyGachaTimes;
 	uint32 accLoginDays;
 
-	PlayerDailyGachaProps()
-	: gachaAccTimes(0)
-	, dailyGachaTimes(0)
-	, accLoginDays(1)
-	{
+PlayerDailyGachaProps()
+: gachaAccTimes(0)
+, dailyGachaTimes(0)
+        , accLoginDays(1)
+        {
 
-	}
+        }
 };
 
 struct CardProps 
@@ -185,10 +201,12 @@ struct CardProps
 	uint32 skillLevel; //技能等级
     uint32 fightPos;   //阵法位置
     uint32 rank;       //卡牌品阶
-
-	CardProps()
-		: slot(0)
-		, cardKey(0)
+    uint32 appoint;    //卡牌册封
+    uint32 time;       //获得卡牌的时间戳
+    
+    CardProps()
+        : slot(0)
+        , cardKey(0)
 		, level(1)
 		, exp(0)
         , costexp(0)
@@ -196,24 +214,36 @@ struct CardProps
 		, skillLevel(1)
         , fightPos(0)
         , rank(1)
-	{
-	}
+        , appoint(0)
+        , time(0)
+        {}
 
-	uint32 getId() const
-	{
+	uint32 getId() const {
 		return slot;
 	}
+
+    void clear() {
+        cardKey    = 0;
+        level      = 0;
+        exp        = 0;
+        costexp    = 0;
+        state      = 0;
+        skillLevel = 0;
+        fightPos   = 0;
+        rank       = 0;
+        appoint    = 0;
+    }
 };
 
 struct BattleDataProps
 {
 	uint16 len;
 	char* data;
-	BattleDataProps()
-	: len(0)
-	, data(NULL)
-	{
-	}
+BattleDataProps()
+: len(0)
+, data(NULL)
+        {
+        }
 };
 
 /**
@@ -230,18 +260,21 @@ struct Item {
             uint16 rank;
             uint16 fightSlot;
             uint32 cost;
+            uint32 appoint;
         } equip;
     };
-
-    Item(uint16 _id = 0, uint16 _count = 0)
-        : id(_id)
-        , count(_count)
+    uint32 time;
+Item(uint16 _id = 0, uint16 _count = 0)
+: id(_id)
+, count(_count)
         , slot(0)
+        , time(0)
         {
             equip.level     = 1;
             equip.rank      = 1;
             equip.fightSlot = 0;
             equip.cost      = 0;
+            equip.appoint   = 0;
         }
 
     void clear() {
@@ -257,9 +290,9 @@ struct ItemRecord {
     Item itemprev;
     Item itemcurr;
 
-    ItemRecord(uint16 _slot = 0)
-        : slot(_slot) {
-    }
+ItemRecord(uint16 _slot = 0)
+: slot(_slot) {
+}
 };
 
 /**
@@ -271,9 +304,9 @@ struct ItemReward {
     uint32 count;
     uint32 level;
 
-    ItemReward()
-        : type(0)
-        , id(0)
+ItemReward()
+: type(0)
+, id(0)
         , count(0)
         , level(0)
         {}
@@ -292,8 +325,8 @@ struct SceneProps
 {
     uint32 LastSpCalcTime;     // 最后体力计算时间
     uint32 LastPvpSpCalcTime;  // 最后耐力计算时间
-    uint32 ShopPayCount;       // 商城已经购买的次数
-    uint32 ShopLastUpdateTime; // 商城最后自动刷新的时间.
+    uint32 ShopPayCount;       // 随机商城已经购买的次数
+    uint32 ShopLastUpdateTime; // 随机商城最后自动刷新的时间.
     uint32 Power;              // 玩家总战力
     uint32 LeadCard;           // 队长卡牌ID
     uint32 LeadCardLv;         // 队长卡牌等级
@@ -307,10 +340,12 @@ struct SceneProps
     };
     uint32 LastDungeonAFTime;  // 最后扫荡时间
     uint32 LastOpTime;         // 最后操作时间
-	uint32 LastChatTime;		//最后聊天时间
-	uint32 FreeChatTimes;		//剩余免费聊天次数
-    SceneProps()
-    {
+	uint32 LastChatTime;	   //最后聊天时间
+	uint32 FreeChatTimes;      //剩余免费聊天次数
+    uint32 MineCount;          // 抢矿次数
+    uint32 LoginSeven;         // 七日登录
+    
+    SceneProps() {
         LastSpCalcTime     = 0;
         LastPvpSpCalcTime  = 0;
         ShopPayCount       = 0;
@@ -326,8 +361,10 @@ struct SceneProps
         QuestFinish        = 0;
         LastDungeonAFTime  = 0;
         LastOpTime         = 0;
-		LastChatTime		= 0;
-		FreeChatTimes		= 10;
+        LastChatTime       = 0;
+        FreeChatTimes      = 10;
+        MineCount          = 0;
+        LoginSeven         = 0;
     }
 };
 
@@ -385,24 +422,26 @@ struct SlotEquip
 
 struct ShopItem
 {
-    uint16 slot;         // 位置
-    uint16 id;           // 物品ID
-    uint8  rand;         // 随机序号
-    uint16 count;        // 堆叠个数
-    uint32 oneprice;     // 物品单价
-    uint8  type;         // 物品类型
-    uint8  restype;      // 资源消耗类型
-    uint8  state;        // 商品状态
-
-    ShopItem()
-        : slot(0)
-        , id(0)
+    int slot;         // 位置
+    int id;           // 物品ID
+    int rand;         // 随机序号
+    int count;        // 堆叠个数
+    int oneprice;     // 物品单价
+    int type;         // 物品类型
+    int restype;      // 资源消耗类型
+    int state;        // 商品状态
+    int time;         // 时间戳
+    
+ShopItem()
+: slot(0)
+, id(0)
         , rand(0)
         , count(0)
         , oneprice(0)
         , type(0)
         , restype(0)
         , state(0)
+        , time(0)
         {}
 };
 
@@ -421,9 +460,9 @@ struct QuestCond
         char key[32];
     };
 
-    QuestCond(uint32 _k1 = 0, uint32 _k2 = 0, uint32 _k3 = 0, uint32 _k4 = 0)
-        : k1(_k1), k2(_k2), k3(_k3), k4(_k4)
-    {}
+QuestCond(uint32 _k1 = 0, uint32 _k2 = 0, uint32 _k3 = 0, uint32 _k4 = 0)
+: k1(_k1), k2(_k2), k3(_k3), k4(_k4)
+        {}
 
     void set(uint32 _k1 = 0, uint32 _k2 = 0, uint32 _k3 = 0, uint32 _k4 = 0) {
         k1 = _k1;
@@ -473,7 +512,8 @@ struct ArenaProps
     uint32 PrevRank;
     uint32 Reward;
     uint32 LastTime;
-
+    uint32 Fighted;
+    
     ArenaProps()
         : Score(0)
         , Lifeused(0)
@@ -482,6 +522,7 @@ struct ArenaProps
         , PrevRank(0)
         , Reward(1)
         , LastTime(0)
+        , Fighted(0)
         {}
 };
 
@@ -489,10 +530,10 @@ struct FriendProps
 {
 	uint16 dataLen;
 	char* data;
-	FriendProps()
-		: dataLen(0)
-		, data(NULL)
-    {}
+FriendProps()
+: dataLen(0)
+, data(NULL)
+        {}
 };
 
 struct CardAttr {
@@ -511,9 +552,9 @@ struct DaySignProps {
     uint8  fill;
     uint8  reward;
     
-    DaySignProps()
-        : month(0)
-        , daySign(0)
+DaySignProps()
+: month(0)
+, daySign(0)
         , fill(0)
         , reward(0)
         {}
@@ -531,9 +572,9 @@ struct BabelProps {
     uint32 endtime;
     uint32 startlevel;
 
-    BabelProps()
-        : curr(0)
-        , best(0)
+BabelProps()
+: curr(0)
+, best(0)
         , lifeused(0)
         , lifecount(0)
         , resetused(0)
@@ -559,24 +600,24 @@ struct HuntingProps
 		uint8 value;
 		bool rewarded;
 
-		HuntingMission()
-			: missionType(0)
-			, require(0)
+    HuntingMission()
+    : missionType(0)
+    , require(0)
 			, value(0)
 			, rewarded(false)
-		{
+            {
 
-		}
+            }
 	}missions[3];           
 
-	HuntingProps()
-		: stayPos(0)
-		, remainTimes(0)
+HuntingProps()
+: stayPos(0)
+, remainTimes(0)
 		, buyTimes(0)
 		, restoreTime(0)
-	{
+        {
 
-	}
+        }
 };
 
 struct DrawCardProps
@@ -593,11 +634,11 @@ struct DrawCardProps
 		bool   gained;         //是否已经获得
 	}cards[6];
 
-	DrawCardProps()
-		: remainTimes(0)
-	{
-		bzero(cards, sizeof(cards));
-	}
+DrawCardProps()
+: remainTimes(0)
+        {
+            bzero(cards, sizeof(cards));
+        }
 };
 
 struct MeltSlot
@@ -606,14 +647,355 @@ struct MeltSlot
     uint16 slot;
 };
 
-#ifndef __SGROBOT__
-struct QuestStatus {
-    SET_CONTAINER(uint16) Rewarded;
-    SET_CONTAINER(uint16) UnRewarded;
-    MAP_CONTAINER(uint16, uint32) Actived;
+struct WorshipProps
+{
+    int Flag[3];
+    int Reward;
+    int Opcount;
+    int Score;
+    
+    WorshipProps() {
+        Flag[0] = 0;
+        Flag[1] = 0;
+        Flag[2] = 0;
+        Reward  = 0;
+        Opcount = 0;
+        Score   = 0;
+    }
 };
 
-const int RankTypeCount = 1;
+struct OfficerProps
+{
+    int CurrLevel;		// 当前官职
+    int Salary;			// 是否领取过当前奉禄
+    
+	int ProtectCD;		// 升职CD
+	int FailCD;			// 挑战失败CD
+
+    int FightCount;		// 权斗次数
+    int FightLimit;		// 权斗限制次数
+
+    int WorshipCount;	// 俯首次数
+    int WorshipLimit;	// 俯首限制次数
+
+    int AwardCount;		// 赏赐次数
+    int AwardLimit;		// 赏赐限制次数
+    
+    int PromoteCount;	// 提拔次数
+    int PromoteLimit;	// 提拔限制次数
+
+    int DemoteCount;	// 贬职次数
+	int DemoteLimit;	// 贬职限制次数
+    int DemoteCD;		// 贬职CD时间
+
+	OfficerProps()
+		: CurrLevel(0)
+		, Salary(0)
+		, ProtectCD(0)
+		, FailCD(0)
+		, FightCount(0)
+        , FightLimit(0)
+        , WorshipCount(0)
+        , WorshipLimit(0)
+        , AwardCount(0)
+        , AwardLimit(0)        
+        , PromoteCount(0)
+        , PromoteLimit(0)
+        , DemoteCount(0)
+		, DemoteLimit(0)
+        , DemoteCD(0)
+        {}
+};
+
+struct Attach
+{
+    int id;
+    int type;
+    int count;
+    Attach() {
+        bzero(this, sizeof(*this));
+    }
+    Attach(const Attach& attach) {
+        id    = attach.id;
+        type  = attach.type;
+        count = attach.count;
+    }
+    
+Attach(int _id, int _type, int _count)
+: id(_id), type(_type), count(_count)
+        {}
+};
+
+struct PersonalMail
+{
+    int        Id;
+    playerid_t CharId;
+    playerid_t CharId2;
+    int        MailType;
+    int        P1;
+    int        P2;
+    int        P3;
+    int        P4;
+    char       Name[TINYSTR];
+    int        CreateTime;
+    int        ReadTime;
+    int        Status;
+    int        Time;
+    
+    PersonalMail() {
+        bzero(this, sizeof(*this));
+    }
+
+    PersonalMail(const PersonalMail& mail) {
+        Id         = mail.Id;
+        CharId     = mail.CharId;
+        CharId2    = mail.CharId2;
+        MailType   = mail.MailType;
+        P1         = mail.P1;
+        P2         = mail.P2;
+        P3         = mail.P3;
+        P4         = mail.P4;
+        strcpy(Name, mail.Name);
+        CreateTime = mail.CreateTime;
+        ReadTime   = mail.ReadTime;
+        Status     = mail.Status;
+        Time       = mail.Time;
+    }
+
+    PersonalMail(int mailtype) {
+        bzero(this, sizeof(*this));
+        MailType = mailtype;
+    }
+};
+
+struct PersonalMailProps
+{
+    int SystemMailIndex;
+
+PersonalMailProps()
+: SystemMailIndex(0)
+        {}
+};
+
+struct SystemMail
+{
+    int         Id;
+    playerid_t  CharId;
+    std::string Title;
+    std::string Content;
+    int         Status;
+    int         CreateTime;
+};
+
+struct SystemMailProps
+{
+    int        Id;
+    playerid_t CharId;
+    char       Title[256];
+    char       Content[1024];
+    int        Status;
+    int        CreateTime;
+    
+    SystemMailProps() {
+        bzero(this, sizeof(*this));
+    }
+    
+    SystemMailProps(const SystemMailProps& props) {
+        Id         = props.Id;
+        CharId     = props.CharId;
+        strcpy(Title, props.Title);
+        strcpy(Content, props.Content);
+        Status     = props.Status;
+        CreateTime = props.CreateTime;
+    }
+};
+
+struct SystemMailDetail
+{
+    int        Id;
+    playerid_t CharId;
+    char       Title[256];
+    char       Content[1024];
+    int        Status;
+    int        CreateTime;
+
+    Attach     AttachItem[4];
+    SystemMailDetail() {
+        bzero(this, sizeof(*this));
+    }
+    
+    SystemMailDetail(const SystemMailDetail& mail) {
+        Id         = mail.Id;
+        CharId     = mail.CharId;
+        strcpy(Title, mail.Title);
+        strcpy(Content, mail.Content);
+        Status     = mail.Status;
+        CreateTime = mail.CreateTime;
+
+        for (int i = 0; i < 4; ++i)
+        {
+            AttachItem[i] = mail.AttachItem[i];
+        }
+    }
+};
+
+struct ReplaysProps {
+    int usecount; // 引用计数
+    int datalen;
+    char * data;  // 战报
+};
+
+struct PlayerBossDataProps
+{
+	uint8	encourage;			//鼓舞
+	uint8	attackTimes;		//攻击次数
+	uint32	lastAttackTime;		//最后攻击的时间
+	uint64	totalDamage;		//总伤害
+    int     lastcount;          //第几次攻击Boss
+    int     fighted;            //参与过Boss战
+    int     rank;               //排名
+    
+	PlayerBossDataProps()
+        : encourage(0)
+		, attackTimes(0)
+		, lastAttackTime(0)
+		, totalDamage(0)
+        , lastcount(0)
+        , fighted(0)
+        , rank(0)
+	{}
+};
+
+struct WorldBossInfo
+{
+    int  BossID;
+    int  KilledTimes;
+    char Player1[TINYSTR];
+    char Player2[TINYSTR];
+    char Player3[TINYSTR];
+    char Killer[TINYSTR];
+    int  time;
+    
+    WorldBossInfo() {
+        bzero(this, sizeof(*this));
+    }
+    
+    WorldBossInfo(const WorldBossInfo& boss) {
+        BossID = boss.BossID;
+        KilledTimes = boss.KilledTimes;
+        strcpy(Player1, boss.Player1);
+        strcpy(Player2, boss.Player2);
+        strcpy(Player3, boss.Player3);
+        strcpy(Killer, boss.Killer);
+    }
+};
+
+struct FriendFlagProps
+{
+    uint8 SpFlag;
+    int   AssistTime;
+
+    FriendFlagProps()
+        : SpFlag(0)
+        , AssistTime(0)
+        {}
+};
+
+struct WorldNoticeProps
+{
+    int NoticeType;
+    int P1;
+    int P2;
+    int P3;
+    int P4;
+    int Time;
+    playerid_t CharId1;
+    char CharName1[TINYSTR];
+    playerid_t CharId2;
+    char CharName2[TINYSTR];
+
+    WorldNoticeProps()
+        : NoticeType(0)
+        , P1(0), P2(0), P3(0), P4(0), Time(0)
+        , CharId1(0), CharId2(0) {
+            bzero(CharName1, sizeof(CharName1));
+            bzero(CharName2, sizeof(CharName2));   
+        }
+
+    WorldNoticeProps(const WorldNoticeProps& props) {
+        NoticeType = props.NoticeType;
+        P1         = props.P1;
+        P2         = props.P2;
+        P3         = props.P3;
+        P4         = props.P4;
+        Time       = props.Time;
+        CharId1    = props.CharId1;
+        CharId2    = props.CharId2;
+        strcpy(CharName1, props.CharName1);
+        strcpy(CharName2, props.CharName2);
+    }
+};
+
+struct MineProps {
+    int        ID;
+    playerid_t CharId;
+    int        OccupyTime;
+    int        Count;
+    int        Time;
+
+    MineProps()
+        : ID(0)
+        , CharId(0)
+        , OccupyTime(0)
+        , Count(0)
+        , Time(0)
+        {}
+
+    MineProps(const MineProps& m) {
+        ID         = m.ID;
+        CharId     = m.CharId;
+        OccupyTime = m.OccupyTime;
+        Count      = m.Count;
+        Time       = m.Time;
+    }
+};
+
+struct tagItem
+{
+	uint32  id;				// 道具的唯一编号
+	uint32	curMaxTimes;	// 当前已经购买的次数
+	uint32	overdueTime;	// 过期时间
+
+	bool operator == (const tagItem& rf)
+	{
+		return id == rf.id;
+	}
+};
+
+// 运钞车
+struct Cashor
+{
+    int ID;
+    int StartTime;
+    int Star;
+    int Money;
+    playerid_t CharID[5];
+};
+
+struct CashProp
+{
+    int StartCount;
+    int AttackCount;
+    
+};
+#ifndef __SGROBOT__
+struct QuestStatus {
+    std::map<int, int> Rewarded;
+    std::map<int, int> UnRewarded;
+    std::map<int, int> Actived;
+};
+
+const int RankTypeCount = 5;
 struct RankData
 {
     uint64 playerid;
@@ -623,17 +1005,19 @@ struct RankData
              * 变量定义的顺序不可更改
              */
             uint64 babel;
+            uint64 arena;
+            uint64 arenahis;
+            uint64 worldboss;
+            uint64 worshipscore;
         };
         uint64 param[RankTypeCount];
     };
     
-    RankData()
-    {
+    RankData() {
         bzero(this, sizeof(*this));
     }
     
-    uint32 index(uint64 *num)
-    {
+    uint32 index(uint64 *num) {
         uint64 dis = static_cast<uint64>(num - param);
         return static_cast<uint32>(dis / sizeof(uint64));
     }
@@ -657,8 +1041,7 @@ struct ItemIndex
 {
     uint32    count;
     vec_slots slots;
-    ItemIndex()
-    {
+    ItemIndex() {
         count = 0;
     }
 };
@@ -673,13 +1056,17 @@ struct NewCard {
     uint8  level;
 
     NewCard(uint16 _cardKey = 0, uint8 _lv = 1)
-    : cardKey(_cardKey)
+        : cardKey(_cardKey)
         , level(_lv) {}
 };
 
 typedef MAP_CONTAINER(uint8, uint32) map_cardprops;
 typedef VECTOR_CONTAINER(NewCard) vec_card;
 
+typedef std::map<int, ShopItem> MAP_RANDITEM;
+typedef std::map<int, MAP_RANDITEM> MAP_RANDSHOP;
+
+typedef std::vector<playerid_t> vec_assiters;
 #endif
 typedef uint8&                          RET;
 typedef uint32&                         URET;                                  

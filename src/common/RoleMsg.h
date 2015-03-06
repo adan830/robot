@@ -143,23 +143,23 @@ struct PlayerBasePropsSMsg : public PlayerMsg
 	char charName[PLAYER_NAME_SIZE]; //角色名
 	uint32 money;					 //铜钱
 	uint32 gold;                     //元宝
-    uint32 arenapoint;               // 勋章
-    uint32 renown;                   // 声望
-    uint32 soulstone;                // 灵石
-    uint32 soulrefined;              // 精魄
-    uint32 horsesoul;                // 马魂
-    uint32 scroll;                   // 残卷
-    uint32 tigersoul;                // 虎魂
-    uint32 picscroll;                // 残画
+    uint32 arenapoint;               //勋章
+    uint32 renown;                   //声望
+    uint32 soulstone;                //灵石
+    uint32 soulrefined;              //精魄
+    uint32 horsesoul;                //马魂
+    uint32 scroll;                   //残卷
+    uint32 tigersoul;                //虎魂
+    uint32 picscroll;                //残画
     uint32 recharged;                //充值总元宝
-	uint8 level;					 //等级
-    uint8 viplevel;                  //VIP等级
+	uint32 level;					 //等级
+    uint32 viplevel;                 //VIP等级
 	uint32 exp;						 //经验
-	uint8 sp;						 //体力
-    uint8 pvpsp;                     //耐力
-    uint16 leadLimit;                //领导力限制
-    uint16 bagCardSize;              //卡牌背包大小
-    uint16 bagEquipSize;             //装备背包大小
+	uint32 sp;						 //体力
+    uint32 pvpsp;                    //耐力
+    uint32 leadLimit;                //领导力限制
+    uint32 bagCardSize;              //卡牌背包大小
+    uint32 bagEquipSize;             //装备背包大小
 
     uint32 BuySpCount;
     uint32 BuyPvpSpCount;
@@ -167,10 +167,16 @@ struct PlayerBasePropsSMsg : public PlayerMsg
     uint32 EliteDunResetCount;
     uint32 ExpDunBuyCount;
     uint32 MoneyDunBuyCount;
+    uint32 HorseDunEnterCount;
+    uint32 ScrollDunEnterCount;
     
     uint32 virgin;
-    uint16 guide;                                  // 新手引导
-
+    uint32 guide;                    // 新手引导
+    uint32 officerlevel;             // 官衔等级
+	uint32 lastTurnLevel;            //等级抽奖的最后等级
+    uint32 MonthCardDays;            // 月卡有效天数
+    uint32 MonthCardReward;          // 今天能否继续领取月卡元宝
+    
     PlayerBasePropsSMsg()
         : PlayerMsg(id, sizeof(*this))
         , playerGuid(0)
@@ -195,6 +201,10 @@ struct PlayerBasePropsSMsg : public PlayerMsg
         , bagEquipSize(0)
         , virgin(0)
         , guide(0)
+        , officerlevel(0)
+        , lastTurnLevel(0)
+        , MonthCardDays(0)
+        , MonthCardReward(0)
 	{
         bzero(charName, sizeof(charName));
 	}
@@ -253,6 +263,7 @@ struct PlayerTeamSMsg: public PlayerMsg
         uint32 costexp;         //累计经验
 		uint8 pos;				//出阵默认位置0 为替补位置
         uint8 rank;             //卡牌品阶
+        uint32 appoint;         //卡牌册封
 	}data[0];
 	PlayerTeamSMsg()
 		: PlayerMsg(id ,sizeof(*this))
@@ -272,10 +283,13 @@ struct PlayerTeamSMsg: public PlayerMsg
 struct TeamPosChangeCMsg: public PlayerMsg
 {                                          
 	enum{ id = 0x822 };
-	uint16 pos[MAX_FIGHT_POS_COUNT];//里面的值用卡牌槽位slot值
+
+    playerid_t AssistID;
+	uint16 pos[MAX_FIGHT_POS_COUNT + 1];//里面的值用卡牌槽位slot值
 	
 	TeamPosChangeCMsg()
 		: PlayerMsg(id ,sizeof(*this))
+        , AssistID(0)
 	{}
 };
 
@@ -300,8 +314,8 @@ struct PlayerSpSyncSMsg : public PlayerMsg
 {
     enum { id = 0x824 };
 
-    uint8 sp;
-    uint8 pvpsp;
+    int    sp;
+    int    pvpsp;
     uint32 sptime;
     uint32 pvpsptime;
     
@@ -530,6 +544,95 @@ struct ChoosePlayerRoleCardSMsg : public PlayerMsg
     {}
 };
 
+//玩家等级转盘
+struct LevelTurnCSMsg: public PlayerMsg
+{
+    enum { id = 0x834 };
+
+    uint32 ret;					//返回值 0 表示抽奖成功 非0表示抽奖失败
+
+    LevelTurnCSMsg()
+        : PlayerMsg(id, sizeof(*this))
+    {
+	
+	}
+};
+
+//领取月卡
+struct MonthCardOpCMsg : public PlayerMsg
+{
+    enum { id = 0x835 };
+
+    int op;
+    
+    MonthCardOpCMsg()
+        : PlayerMsg(id, sizeof(*this))
+    {}
+};
+
+// 请求功能人数
+struct PlayerCountCMsg : public PlayerMsg
+{
+    enum { id = 0x836 };
+
+    PlayerCountCMsg()
+        : PlayerMsg(id, sizeof(*this))
+    {}
+};
+
+// 答复功能人数
+struct PlayerCountSMsg : public PlayerMsg
+{
+    enum {id = 0x837 };
+
+    int count[10];
+    
+    PlayerCountSMsg()
+        : PlayerMsg(id, sizeof(*this))
+    {
+        bzero(count, sizeof(count));
+    }
+};
+
+// 七日登录请求
+struct LoginSevenCMsg : public PlayerMsg
+{
+    enum { id = 0x838 };
+
+    int day;
+    
+    LoginSevenCMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , day(0)
+    {}
+};
+
+// 七日登录
+struct LoginSevenSMsg : public PlayerMsg
+{
+    enum { id = 0x839 };
+
+    int scores[7];
+    
+    LoginSevenSMsg()
+        : PlayerMsg(id, sizeof(*this))
+    {
+        bzero(scores, sizeof(scores));
+    }
+};
+
+
+struct PanelStatusSMsg : public PlayerMsg
+{
+    enum { id = 0x889 };
+
+    int status;
+    
+    PanelStatusSMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , status(0)
+    {}
+};
 #pragma pack(pop)
 
 CORE_NAMESPACE_END

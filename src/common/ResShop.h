@@ -27,6 +27,7 @@ struct ShopBase
 
 	DWORD ID;
     WORD weight;
+    WORD shoptype;
     BYTE itemType;
     WORD MinLevel;
     WORD MaxLevel;
@@ -48,7 +49,7 @@ struct ShopBase
     uint32 maxPriceProbable;
     static uint32 maxWeight;
     static uint32 maxArenaWeight;
-
+    
     static uint32 GeneralShopStartId;
     static uint32 GeneralShopEndId;
     
