@@ -1,0 +1,767 @@
+/**
+ * \filename   Define.h     v1.0
+ * \brief      
+ *             
+ * \author     zhufang(zhufang666@gmail.com)
+ * \created    2012-08-24 12:46
+ */
+#ifndef __NXCORE_DEFINE__
+#define __NXCORE_DEFINE__
+
+#include "Base.h"
+#include "string.h"
+#include "VIPEnums.h"
+#include "BattleEnums.h"
+#include "DungeonEnums.h"
+#include "PlayerCardEnums.h"
+#include "PlayerOpEnums.h"
+#include "UnlockFuncEnums.h"
+
+CORE_NAMESPACE_START
+
+typedef uint64 playerid_t;
+typedef uint64 sceneid_t;
+typedef uint64 accuid_t;
+
+const int TINYSTR                   = 32;
+const uint8 ACCOUNT_NAME_SIZE       = 32;
+const uint8 PASSWORD_SIZE           = 32;
+const uint8 PLAYER_NAME_SIZE        = 32; 
+const uint8 PLAYER_SIGN_SIZE        = 32;
+const uint8 EMAIL_SIZE              = 64;
+const uint8 MAX_FIGHT_COUNT         = 6;                        //最大出战人数
+const uint8 MAX_FIGHT_POS_COUNT     = 6;                        //最大出战人数
+const uint8 ASSIST_SLOT             = 7;                        //外援槽位
+const uint8 MAX_BATTLE_COUNT        = MAX_FIGHT_POS_COUNT * 2;  //双方最大出战人数
+const uint8 MAX_FIGHT_SLOT          = 9;                        //预留出战人数槽位
+const uint8 MAX_TEAM_COUNT          = 3;                        //预留最大队伍数量
+const uint16 MAX_CARD_SLOT          = 512;                      //预留最大槽位
+const uint16 TEAM_LEADER_SLOT       = 1;                        //队长的固定槽位
+const uint8 MAX_MONSTER_COUNT       = 6;                        //最大怪物组怪数量
+const uint32 MAX_BATTLE_ROUND       = 30;                       //战斗最大回合数
+const uint32 UNIT_PERSEC            = 20;
+const uint8 MAX_PSKILL_COUNT        = 4;                        //最大被动技能数量
+const uint8 MAX_BUFF_COUNT          = 6;                        //战斗中最多叠加的Buf数量
+const uint8 MAX_LEVELUP_COST        = 6;
+const uint8 MAX_RANK_LIMIT          = 7;                        //卡牌最大是7阶
+const uint8 MAX_SKILL_UNLOCK_COUNT  = 3;                        //主动技能解锁数量
+const uint8 MAX_PSKILL_UNLOCK_COUNT = 4;                        //被动技能解锁数量
+const uint8 MAX_COMBO_SKILL         = 5;                        //最大的组合技能数量
+const uint32 MAX_UINT32             = 0xffffffff;
+const uint64 MAX_UINT64             = 0xffffffffffffffff;
+const uint16 ANTI_ADDICTION_TIME    = 10830;  
+const uint32 MAX_QUERY_LEN          = 10240;
+const uint32 MONEY_MAX_NUMBER       = 2100000000;
+const uint32 GOLD_MAX_NUMBER        = 2100000000;
+const uint16 BATTLE_DATA_VERSION    = 0x0001;                   //战斗数据版本
+const uint8 LOGIN_ZONE_COUNT        = 5;                        //最近登录的ZoneId个数
+const uint8 MAX_SP                  = 100;
+const uint8 MAX_PVPSP               = 100;                      // 耐力上限
+
+const uint8 PLATFORM_NAME_SIZE      = 21;                       //平台名称长度
+const uint8 PLATFORM_VERSION_SIZE   = 11;                       //平台版本长度
+
+const uint8 GUILD_NAME_SIZE         = 25;                       //帮会名称长度 8个中文长度
+const uint8 GUILD_LEADER_NAME_SIZE  = 32;                       //帮主名称长度
+const uint16 GUILD_NOTICE_SIZE      = 151;                      //帮会公告长度
+
+const int MAX_MAIL_ITEMS_COUNT      = 5;                        //邮件附件最多道具数量
+const int MAX_MAIL_SUBJECT_LEN      = 60;                       //邮件主题最长长度
+const int MAX_MAIL_BODY_LEN         = 3072;                     //邮件内容最长长度
+
+const uint32 MINE_TIME_BEGIN        = 9 * 3600;                 //保护的开始时间
+const uint32 MINE_TIME_END          = 23 * 3600;                //保护的结束时间
+
+const uint32 OFFICER_CD_INTERVAL	= 2 * 3600;					// 晋升挑战的CD时间保护
+
+const int SERVER_GATEWAY			= 1;
+#define GAME_NOVICE_CARD "NCH"									//新手卡激活码前3位标示
+
+const uint8 MONTHS[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+#pragma pack(push, 1)
+
+enum GameSetting
+{
+    GameSetting_critparam1 = 1,         //默认暴击率
+    GameSetting_critparam2 = 2,         //暴击调整系数
+    GameSetting_accparam1 = 30,         //默认命中率
+    GameSetting_accparam2 = 31,         //默认命中系数，需要除以10000
+    GameSetting_ArenaStaCD = 32,        //耐力恢复时间
+    GameSetting_First_row_time = 33,    //第一排起始位置
+    GameSetting_Second_row_time = 34,   //第二排起始位置
+    GameSetting_Chat_CD                 = 60,
+    GameSetting_Chat_free_times         = 61,
+    GameSetting_Chat_cost               = 62,
+    GameSetting_Hunting_number          = 63,
+    GameSetting_Player_update_Hunting   = 64,
+
+    GameSetting_Lucky_free_times        = 67,// 点神兵每日免费刷新次数
+    GameSetting_Lucky_refresh_cost      = 68,// 点神兵刷新消耗铜币数
+    GameSetting_Lucky_conversion        = 69,// 1个神兵令对应元宝价值
+
+    GameSetting_Inspire_cost1 = 70,//群雄逐鹿铜币鼓舞价格
+    GameSetting_Inspire_cost2 = 71,//群雄逐鹿少量元宝鼓舞价格
+    GameSetting_Inspire_cost3 = 72,//群雄逐鹿大量元宝鼓舞价格
+    GameSetting_Renascence_cost = 73,//群雄逐鹿使用复活清除攻击CD价格
+    GameSetting_Boss_Attack_times = 73,//群雄逐鹿世界BOSS的攻击CD时间
+    GameSetting_Inspire_damage1 = 74,//群雄逐鹿铜币鼓舞增加的伤害
+    GameSetting_Inspire_damage2 = 75,//群雄逐鹿少量元宝鼓舞增加的伤害
+    GameSetting_Inspire_damage3 = 76,//群雄逐鹿大量元宝鼓舞增加的伤害
+
+
+    GameSetting_Mine_power_cost         = 92,   // 抢矿消耗体力值
+    GameSetting_Mine_extend_time        = 94,   // 抢矿延长一次时长
+    GameSetting_Mine_extend_times       = 95,   // 抢矿延长次数
+    GameSetting_Mine_extend_cost1       = 96,   // 抢矿第一次延长次数消耗元宝数
+    GameSetting_Mine_extend_cost2       = 97,   // 抢矿第二次延长次数消耗元宝数
+    GameSetting_Mine_protect_cost       = 98,   // 夜间抢矿额外消耗元宝数
+    GameSetting_Mine_monstergroup       = 99,   // 抢空矿怪物组
+};
+enum Oper
+{
+    Oper_Add     = 1,
+    Oper_Sub     = 2,
+    Oper_Replace = 3,
+};
+
+enum DateType
+{
+    Date_Year   = 1,
+    Date_Month  = 2,
+    Date_Day    = 3,
+    Date_Week   = 4
+};
+
+enum PlayerDataType
+{
+    PlayerDataType_Normal       = (0x00000001 << 0),            //一般
+    PlayerDataType_BaseData     = (0x00000001 << 1),            //基本数据
+    PlayerDataType_Lottery      = (0x00000001 << 2),            //每日抽奖
+    PlayerDataType_LootCD       = (0x00000001 << 3),            //掉落组CD
+    PlayerDataType_Card         = (0x00000001 << 4),            //卡牌
+    PlayerDataType_Equip        = (0x00000001 << 5),            //装备
+    PlayerDataType_Sundry       = (0x00000001 << 6),            //道具
+    PlayerDataType_CardChips    = (0x00000001 << 7),            //卡牌碎片
+    PlayerDataType_EquipChips   = (0x00000001 << 8),            //装备碎片
+    PlayerDataType_CentralBase  = (0x00000001 << 9),            //中心服基础数据
+    PlayerDataType_ArenaData    = (0x00000001 << 10),           //竞技场数据
+    PlayerDataType_FriendData   = (0x00000001 << 11),           //好友数据
+    PlayerDataType_HuntingData  = (0x00000001 << 12),           //狩猎数据
+    PlayerDataType_DrawCardData = (0x00000001 << 13),           //点神兵数据
+    PlayerDataType_Quest        = (0x00000001 << 14),           //任务数据
+    PlayerDataType_SceneProps   = (0x00000001 << 15),           //场景基本数据
+    PlayerDataType_Babel        = (0x00000001 << 16),           //场景基本数据
+    PlayerDataType_Vip          = (0x00000001 << 17),           //VIP数据
+    PlayerDataType_RandShop     = (0x00000001 << 18),           //随机商城数据
+    PlayerDataType_Worship      = (0x00000001 << 19),           //膜拜系统
+    PlayerDataType_Officer      = (0x00000001 << 20),           //官爵系统
+    PlayerDataType_Mail         = (0x00000001 << 21),           //邮件
+    PlayerDataType_MailProps    = (0x00000001 << 22),           //邮件系统
+};
+
+/** 
+ ** \brief 场景实体类型
+ */
+enum SceneEntityType
+{                                            
+    SceneEntityType_Unknown = 0,    //玩家
+    SceneEntityType_Player,         //玩家   
+    SceneEntityType_Monster,        //怪物   
+    SceneEntityType_MonsterGroup,   //怪物组 
+    SceneEntityType_Max,                     
+};  
+
+//阵营
+enum Nation
+{
+    Nation_Wei  = 1,                //魏国
+    Nation_Shu  = 2,                //蜀国
+    Nation_Wu   = 3,                //吴国
+};
+
+//卡牌属性
+//相克关系为：力克敏，敏克智，智克力
+enum Attribute
+{
+    Attribyte_Strength = 1,         //力量
+    Attribyte_Agility = 2,          //敏捷
+    Attribyte_Intelligence = 3,     //智力
+};
+//卡牌状态
+enum CardState
+{
+    CardState_None          = 0x00,
+    CardState_Protected     = 0x01,             //保护
+};
+
+//时间类型
+enum TimerType
+{
+    TimerType_None,
+    TimerType_Count,
+};
+
+/**
+  * \brief 战斗属性索引
+ */
+enum FightPropIndex 
+{
+    FightPropIndex_MaxHp        = 1,  //生命上限
+    FightPropIndex_MaxMp        = 2,  //魔法上限
+    FightPropIndex_PAttack      = 3,  //普通物理攻击
+    FightPropIndex_MAttack      = 4,  //普通法术攻击
+    FightPropIndex_PSkillAttack = 5,  //技能物理攻击
+    FightPropIndex_MSkillAttack = 6,  //技能法术攻击
+    FightPropIndex_PDefence     = 7,  //物理防御
+    FightPropIndex_MDefence     = 8,  //法术防御
+    FightPropIndex_Crit         = 9,  //暴击值
+    FightPropIndex_Toughness    = 10, //韧性值
+    FightPropIndex_Accuracy     = 11, //命中值
+    FightPropIndex_Dodge        = 12, //躲闪值
+    FightPropIndex_Speed        = 13, //速度
+    FightPropIndex_Power        = 14, //武力
+    FightPropIndex_Agile        = 15, //统率
+    FightPropIndex_Wisdom       = 16, //智力
+    FightPropIndex_PPenetration = 23, //物理穿透
+    FightPropIndex_MPenetration = 24, //法术穿透
+
+    FightPropIndex_HPRat        = 101, //生命值率
+    FightPropIndex_AttackRat    = 103, //攻击力率
+    FightPropIndex_CritRat      = 109, //暴击率
+    FightPropIndex_ToughnessRat = 110, //韧性值率
+    FightPropIndex_AccuracyRat  = 111, //命中值率
+    FightPropIndex_DodgeRat     = 112, //躲闪值率
+
+};
+
+/**
+ * \brief 卡牌战斗属性
+ */
+struct FightProperties
+{
+    uint32  hp;                 //  当前生命     1-999999
+    uint32  maxHp;              //  生命上限     1-999999
+    uint32  mp;                 //  当前魔法     1-999999
+    uint32  maxMp;              //  魔法上限     1-999999
+    uint32  pAttack;            //  普通物理攻击 1-999999
+    uint32  mAttack;            //  普通法术攻击 1-999999
+    uint32  pSkillAttack;       //  技能物理攻击 1-999999
+    uint32  mSkillAttack;       //  技能法术攻击 1-999999
+    uint32  pDefence;           //  物理防御     1-999999
+    uint32  mDefence;           //  法术防御     1-999999
+    uint32  crit;               //  暴击值       1-999999
+    uint32  toughness;          //  韧性值       1-999999
+    uint32  accuracy;           //  命中值       1-999999
+    uint32  dodge;              //  躲闪值       1-999999
+    uint32  critDmgAmend;       //  暴击值修正   1-999999
+    uint32  speed;              //  速度         1-999999
+    uint32  power;              //  武力
+    uint32  agile;              //  统率
+    uint32  wisdom;             //  智力
+    uint32  critrat;            //  暴击率
+    uint32  toughnessrat;       //  韧性值率
+    uint32  accuracyrat;        //  命中值率
+    uint32  dodgerat;           //  躲闪值率
+    uint32  HPrat;              //  生命值率
+    uint32  attackrat;          //  攻击力率
+    uint32  pPenetration;       //  护甲穿透
+    uint32  mPenetration;       //  法术穿透
+
+    FightProperties()
+    {
+        reset();
+    }
+
+    void reset()
+    {
+        bzero(this, sizeof(*this));
+    }
+
+    uint32 sub(uint32 param, uint32 subparam) {
+        return param > subparam ? param - subparam : 0;
+    }
+    
+    FightProperties &operator+=(const FightProperties &fightProp)
+    {
+        uint32* p = &this->hp;
+        const uint32* q = &fightProp.hp;
+        uint32* end = &this->mPenetration;
+        
+        while (p <= end) {
+            *p += *q;
+            ++p;
+            ++q;
+        }
+        
+        return *this;
+    }
+
+    void AddProps(FightPropIndex index, uint32 value)
+    {
+        switch(index)
+        {
+            case FightPropIndex_MaxHp: maxHp += value; break;
+            case FightPropIndex_MaxMp: maxMp += value; break;
+            case FightPropIndex_PAttack:
+            case FightPropIndex_MAttack:
+            case FightPropIndex_PSkillAttack:
+            case FightPropIndex_MSkillAttack:
+                {
+                    pAttack += value;
+                    mAttack += value;
+                    pSkillAttack += value;
+                    mSkillAttack += value;
+                }
+                break;
+            case FightPropIndex_PDefence     : pDefence     += value; break;
+            case FightPropIndex_MDefence     : mDefence     += value; break;
+            case FightPropIndex_Crit         : crit         += value; break;
+            case FightPropIndex_Toughness    : toughness    += value; break;
+            case FightPropIndex_Accuracy     : accuracy     += value; break;
+            case FightPropIndex_Dodge        : dodge        += value; break;
+            case FightPropIndex_Speed        : speed        += value; break;
+            case FightPropIndex_Power        : power        += value; break;
+            case FightPropIndex_Agile        : agile        += value; break;
+            case FightPropIndex_Wisdom       : wisdom       += value; break;
+            case FightPropIndex_CritRat      : critrat      += value; break;
+            case FightPropIndex_ToughnessRat : toughnessrat += value; break;
+            case FightPropIndex_AccuracyRat  : accuracyrat  += value; break;
+            case FightPropIndex_DodgeRat     : dodgerat     += value; break;
+            case FightPropIndex_HPRat        : HPrat        += value; break;
+            case FightPropIndex_AttackRat    : attackrat    += value; break;
+            case FightPropIndex_PPenetration : pPenetration += value; break;
+            case FightPropIndex_MPenetration : mPenetration += value; break;
+            default:
+                break;
+        }
+    }
+
+    void SubProps(FightPropIndex index, uint32 value)
+    {
+        switch(index)
+        {
+            case FightPropIndex_MaxHp: maxHp = sub(maxHp, value); break;
+            case FightPropIndex_MaxMp: maxMp = sub(maxMp, value); break;
+            case FightPropIndex_PAttack:
+            case FightPropIndex_MAttack:
+            case FightPropIndex_PSkillAttack:
+            case FightPropIndex_MSkillAttack:
+                {
+                    pAttack = sub(pAttack, value);
+                    mAttack = sub(mAttack, value);
+                    pSkillAttack = sub(pSkillAttack, value);
+                    mSkillAttack = sub(mSkillAttack, value);
+                }
+                break;
+            case FightPropIndex_PDefence     : pDefence     = sub(pDefence     , value); break;
+            case FightPropIndex_MDefence     : mDefence     = sub(mDefence     , value); break;
+            case FightPropIndex_Crit         : crit         = sub(crit         , value); break;
+            case FightPropIndex_Toughness    : toughness    = sub(toughness    , value); break;
+            case FightPropIndex_Accuracy     : accuracy     = sub(accuracy     , value); break;
+            case FightPropIndex_Dodge        : dodge        = sub(dodge        , value); break;
+            case FightPropIndex_Speed        : speed        = sub(speed        , value); break;
+            case FightPropIndex_Power        : power        = sub(power        , value); break;
+            case FightPropIndex_Agile        : agile        = sub(agile        , value); break;
+            case FightPropIndex_Wisdom       : wisdom       = sub(wisdom       , value); break;
+            case FightPropIndex_CritRat      : critrat      = sub(critrat      , value); break;
+            case FightPropIndex_ToughnessRat : toughnessrat = sub(toughnessrat , value); break;
+            case FightPropIndex_AccuracyRat  : accuracyrat  = sub(accuracyrat  , value); break;
+            case FightPropIndex_DodgeRat     : dodgerat     = sub(dodgerat     , value); break;
+            case FightPropIndex_HPRat        : HPrat        = sub(HPrat        , value); break;
+            case FightPropIndex_AttackRat    : attackrat    = sub(attackrat    , value); break;
+            case FightPropIndex_PPenetration : pPenetration = sub(pPenetration , value); break;
+            case FightPropIndex_MPenetration : mPenetration = sub(mPenetration , value); break;
+            default:
+                break;
+        }
+    }
+};
+
+/**
+ * \brief 卡牌战斗属性百分比加成
+ */
+struct FightPropsPercent
+{
+    uint32  maxHp;              //  生命上限
+    uint32  maxMp;              //  魔法上限
+    uint32  pAttack;            //  普通物理攻击
+    uint32  mAttack;            //  普通法术攻击
+    uint32  pSkillAttack;       //  技能物理攻击
+    uint32  mSkillAttack;       //  技能法术攻击
+    uint32  pDefence;           //  物理防御
+    uint32  mDefence;           //  法术防御
+    uint32  crit;               //  暴击值
+    uint32  toughness;          //  韧性值
+    uint32  accuracy;           //  命中值
+    uint32  dodge;              //  躲闪值
+    uint32  critDmgAmend;       //  暴击值修正
+    uint32  speed;              //  速度
+    uint32  power;              //  武力
+    uint32  agile;              //  统率
+    uint32  wisdom;             //  智力
+    uint32  critrat;            //  暴击率
+    uint32  toughnessrat;       //  韧性值率
+    uint32  accuracyrat;        //  命中值率
+    uint32  dodgerat;           //  躲闪值率
+    uint32  HPrat;              //  生命值率
+    uint32  attackrat;          //  攻击力率
+    uint32  pPenetration;       //  护甲穿透
+    uint32  mPenetration;       //  法术穿透
+    
+    FightPropsPercent(uint8 init = 100)
+        : maxHp(init)
+        , maxMp(init)
+        , pAttack(init)
+        , mAttack(init)
+        , pSkillAttack(init)
+        , mSkillAttack(init)
+        , pDefence(init)
+        , mDefence(init)
+        , crit(init)
+        , toughness(init)
+        , accuracy(init)
+        , dodge(init)
+        , critDmgAmend(init)
+        , speed(init)
+        , power(init)
+        , agile(init)
+        , wisdom(init)
+        , critrat(init)
+        , toughnessrat(init)
+        , accuracyrat(init)
+        , dodgerat(init)
+        , HPrat(init)
+        , attackrat(init)
+        , pPenetration(init)
+        , mPenetration(init)
+    {
+    }
+
+    void reset()
+    {
+        maxHp        = 100;
+        maxMp        = 100;
+        pAttack      = 100;
+        mAttack      = 100;
+        pSkillAttack = 100;
+        mSkillAttack = 100;
+        pDefence     = 100;
+        mDefence     = 100;
+        crit         = 100;
+        toughness    = 100;
+        accuracy     = 100;
+        dodge        = 100;
+        critDmgAmend = 0;
+        speed        = 100;
+        power        = 100;
+        agile        = 100;
+        wisdom       = 100;
+        critrat      = 100;
+        toughnessrat = 100;
+        accuracyrat  = 100;
+        dodgerat     = 100;
+        HPrat        = 100;
+        attackrat    = 100;
+        pPenetration = 100;
+        mPenetration = 100;
+    }
+    
+    void zero()
+    {
+        bzero(this, sizeof(*this));
+    }
+
+    uint32 sub(uint32 param, uint32 subparam) {
+        return param > subparam ? param - subparam : 0;
+    }
+
+    FightPropsPercent &operator+=(const FightPropsPercent &fightPropPer)
+    {
+        uint32*       p = &this->maxHp;
+        const uint32* q = &fightPropPer.maxHp;
+        uint32* end = &this->mPenetration;
+        
+        while (p <= end) {
+            *p += *q;
+            ++p;
+            ++q;
+        }
+        
+        return *this;
+    }
+    
+    void AddProps(FightPropIndex index, uint32 value)
+    {
+        switch(index)
+        {
+            case FightPropIndex_MaxHp: maxHp += value; break;
+            case FightPropIndex_MaxMp: maxMp += value; break;
+            case FightPropIndex_PAttack:
+            case FightPropIndex_MAttack:
+            case FightPropIndex_PSkillAttack:
+            case FightPropIndex_MSkillAttack:
+                {
+                    pAttack += value;
+                    mAttack += value;
+                    pSkillAttack += value;
+                    mSkillAttack += value;
+                }
+                break;
+            case FightPropIndex_PDefence     : pDefence     += value; break;
+            case FightPropIndex_MDefence     : mDefence     += value; break;
+            case FightPropIndex_Crit         : crit         += value; break;
+            case FightPropIndex_Toughness    : toughness    += value; break;
+            case FightPropIndex_Accuracy     : accuracy     += value; break;
+            case FightPropIndex_Dodge        : dodge        += value; break;
+            case FightPropIndex_Speed        : speed        += value; break;
+            case FightPropIndex_Power        : power        += value; break;
+            case FightPropIndex_Agile        : agile        += value; break;
+            case FightPropIndex_Wisdom       : wisdom       += value; break;
+            case FightPropIndex_CritRat      : critrat      += value; break;
+            case FightPropIndex_ToughnessRat : toughnessrat += value; break;
+            case FightPropIndex_AccuracyRat  : accuracyrat  += value; break;
+            case FightPropIndex_DodgeRat     : dodgerat     += value; break;
+            case FightPropIndex_HPRat        : HPrat        += value; break;
+            case FightPropIndex_AttackRat    : attackrat    += value; break;
+            case FightPropIndex_PPenetration : pPenetration += value; break;
+            case FightPropIndex_MPenetration : mPenetration += value; break;
+            default:
+                break;
+        }
+    }
+    
+    void SubProps(FightPropIndex index, uint32 value)
+    {
+        switch(index)
+        {
+            case FightPropIndex_MaxHp: maxHp = sub(maxHp, value); break;
+            case FightPropIndex_MaxMp: maxMp = sub(maxMp, value); break;
+            case FightPropIndex_PAttack:
+            case FightPropIndex_MAttack:
+            case FightPropIndex_PSkillAttack:
+            case FightPropIndex_MSkillAttack:
+                {
+                    pAttack = sub(pAttack, value);
+                    mAttack = sub(mAttack, value);
+                    pSkillAttack = sub(pSkillAttack, value);
+                    mSkillAttack = sub(mSkillAttack, value);
+                }
+                break;
+            case FightPropIndex_PDefence     : pDefence     = sub(pDefence     , value); break;
+            case FightPropIndex_MDefence     : mDefence     = sub(mDefence     , value); break;
+            case FightPropIndex_Crit         : crit         = sub(crit         , value); break;
+            case FightPropIndex_Toughness    : toughness    = sub(toughness    , value); break;
+            case FightPropIndex_Accuracy     : accuracy     = sub(accuracy     , value); break;
+            case FightPropIndex_Dodge        : dodge        = sub(dodge        , value); break;
+            case FightPropIndex_Speed        : speed        = sub(speed        , value); break;
+            case FightPropIndex_Power        : power        = sub(power        , value); break;
+            case FightPropIndex_Agile        : agile        = sub(agile        , value); break;
+            case FightPropIndex_Wisdom       : wisdom       = sub(wisdom       , value); break;
+            case FightPropIndex_CritRat      : critrat      = sub(critrat      , value); break;
+            case FightPropIndex_ToughnessRat : toughnessrat = sub(toughnessrat , value); break;
+            case FightPropIndex_AccuracyRat  : accuracyrat  = sub(accuracyrat  , value); break;
+            case FightPropIndex_DodgeRat     : dodgerat     = sub(dodgerat     , value); break;
+            case FightPropIndex_HPRat        : HPrat        = sub(HPrat        , value); break;
+            case FightPropIndex_AttackRat    : attackrat    = sub(attackrat    , value); break;
+            case FightPropIndex_PPenetration : pPenetration = sub(pPenetration    , value); break;
+            case FightPropIndex_MPenetration : mPenetration     = sub(mPenetration    , value); break;
+            default:
+                break;
+        }
+    }
+};
+
+/**
+* \brief 战斗录像类型
+*/
+enum BattleRecordType
+{
+    BattleRecordType_None = 0,
+    BattleRecordType_CastSkill,         //释放技能
+    BattleRecordType_RemoveBuf,         //移除Buf
+    BattleRecordType_AddBuf,            //增加Buf
+    BattleRecordType_BufDamage,         //Buf伤害
+    BattleRecordType_BufRemedy,         //Buf治疗
+    BattleRecordType_StrikeSkill,       //触发被动技能
+    BattleRecordType_Death,             //死亡
+    BattleRecordType_HelperToBattle,    //外援上阵
+};
+
+struct SkillEffect
+{
+    uint8 pos;                          //位置
+    uint32 effect;                      //效果  
+    int64 damage;                       //伤害
+};
+
+/**
+  *技能技能
+  */
+struct BattleRecordCastSkill
+{
+    uint16 round;
+    uint8 caster;                       //释放者
+    uint16 skillId;                     //技能ID
+    uint8 effectCount;                  //效果数量
+    SkillEffect efffects[0];            //技能效果  
+};
+
+struct BuffEffect
+{
+    uint8 pos;                          //位置
+    uint8 buffType;                     //BufType
+    uint32 effectId;                    //效果ID    
+    uint32 param;
+};
+
+struct BattleRecordDeath
+{
+	uint8 pos;							//位置
+};
+/**
+  *AddBuff 技能后面的记录紧跟着Buf记录，
+  */
+struct BattleRecordAddBuf
+{
+	//uint16 tv;							//时间
+	//uint8 caster;						//释放者
+	uint8 effectCount;					//效果数量
+	BuffEffect bufEffects[0];			//Buff效果
+};
+
+/**
+  * Battle Record RemoveBuff
+  */
+struct BattleRecordRemoveBuf
+{
+	uint16 tv;
+	uint8 target;
+	uint8 bufType;
+	uint32 bufEffectID;
+};
+
+/**
+  * Battle Record BuffDamge
+ */
+struct BattleRecordBufDamge
+{
+	uint16 round;
+	uint8 target;
+	uint32 effect;					//PkEffect
+	uint8 bufType;
+	uint32 bufEffectID;
+	uint32 damage;
+};
+
+/**
+  * Battle Record BuffRemedy
+ */
+struct BattleRecordBufRemedy
+{
+	uint16 round;
+	uint8 target;
+	uint32 effect;					//PkEffect
+	uint8 bufType;
+	uint32 bufEffectID;
+	uint32 damage;
+};
+
+// 外援上阵到了几号位
+struct BattleRecordHelperToBattle
+{
+    uint16 round;
+    uint8 pos;
+};
+/**
+* \brief 战斗录像
+*/
+struct BattleRecords
+{
+	uint32 entityID;								//ID玩家ID或者MonsterGroupID
+	char   entityName[PLAYER_NAME_SIZE];			//玩家名称
+	uint32 entityPower;								//玩家战力
+	uint32 pkEntityID;								//ID玩家ID或者MonsterGroupID
+	char   pkEntityName[PLAYER_NAME_SIZE];			//玩家名称
+	uint32 pkEntityPower;							//玩家战力
+	uint8 victory;									//0 战斗失败 1胜利
+	uint16 recordCount;								//录像记录
+	uint8 cardCount;								//出战卡牌
+	
+	struct CardBattleProperties
+	{
+		uint8 pos;									//卡牌位置
+		uint32 ID;									//ID cardKey或者MonsterID
+		uint32 HP;									//血量
+		uint16 speed;								//速度
+		uint16 stepPos;								//初始位置
+	}cardBattleProps[0];
+};
+
+/**
+* \brief 战斗属性
+*/
+struct BattleRecordData
+{
+	uint16 battleDataVersion;	//战斗数据版本号
+	uint8 battleType;			//见BattleType定义
+	uint16 sceneID;				//场景ID
+    uint8 score;                //战斗评星
+	uint8 victory;				//0 战斗失败 1胜利
+	uint8 count;				//战斗录像数量
+	BattleRecords battleRecords[0];	
+};
+
+/**
+* \brief 技能解锁
+*/
+struct SkillUnlock
+{
+	uint16 skillId;			//技能ID
+	uint8  unlockRank;		//解锁阶数
+	uint16 unlockEquip;		//解锁装备
+};
+
+struct TriggerSkillUnlock
+{
+	uint16 skillId;			//技能ID
+    uint8  touchType;       //触发类型
+	uint8  unlockRank;		//解锁阶数
+	uint16 unlockEquip;		//解锁装备
+
+};
+
+/**
+* \brief 玩家PVP数据
+*/
+struct PVPDataProps    
+{                      
+	uint32 entityID;								//ID玩家ID或者MonsterGroupID
+	playerid_t playerGuid;							//
+	uint32 power;									//战力
+	char   entityName[PLAYER_NAME_SIZE];			//玩家名称
+	uint8 count;       
+	struct CardProps
+	{                  
+		uint8 pos;									//出战位置
+		uint32 baseId;								//卡牌ID
+		uint8 level;								//卡牌等级
+		uint8 attribute;							//卡牌属性
+		FightProperties     fightProps;             //初始战斗属性 
+		FightPropsPercent   fightPropsPerc;         //战斗属性百分值 
+		uint16 ATKID;								//普通攻击技能
+		uint16 skillId;								//主动技能
+		uint16 pSkillId[MAX_PSKILL_COUNT];			//被动技能
+	}cardProps[0];
+
+	uint32 getSize()
+	{
+		return sizeof(*this) + sizeof(cardProps[0]) * count;
+	}
+};                     
+
+#pragma pack(pop)
+
+CORE_NAMESPACE_END
+
+#endif//__NXCORE_DEFINE__
+

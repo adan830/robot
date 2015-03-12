@@ -1,0 +1,167 @@
+/**
+ * \filename   WorldBossMsg.h		v1.0
+ * \brief      
+ *             
+ * \author     zhufang(zhufang666@gmail.com)
+ * \created    2014-12-05 11:00
+ */
+#ifndef __NXCORE_WORLDBOSSMSG__
+#define __NXCORE_WORLDBOSSMSG__
+
+#include <MsgDefine.h>
+#ifndef __SGROBOT__
+#include <MemRoster.h>
+#endif
+
+CORE_NAMESPACE_START
+
+#pragma pack(push, 1)
+
+enum WorldBossOp
+{
+	WorldBossOp_Data		= 1,		//请求数据
+	WorldBossOp_Rank		= 2,		//请求排行榜数据
+	WorldBossOp_Encourage	= 3,		//鼓舞 param=1,2,3
+	WorldBossOp_Attack		= 4,		//攻击世界Boss
+	WorldBossOp_Revive		= 5,		//客户端请求元宝复活
+};
+
+/**
+ * \brief 世界Boss操作
+ */
+struct WorldBossOpCSMsg: public PlayerMsg
+{
+    enum { id = 0x920};
+
+	uint8 op;						//参加enum WorldBossOp
+	uint32 param;					//参数
+	uint8 ret;						//返回值 0:表示成功 否则失败
+    
+    WorldBossOpCSMsg()
+        : PlayerMsg(id, sizeof(*this))
+		, op(0)
+		, param(0)
+		, ret(0)
+    {}
+};
+
+/**
+ * \brief 未开启世界Boss信息
+ */
+struct WorldBossInfoSMsg: public PlayerMsg
+{
+    enum { id = 0x921};
+
+	uint16 bossId;					//BossId
+	uint8 havePrize;				//是否有奖励
+	struct
+	{
+		char attacker[PLAYER_NAME_SIZE];
+	}ranks[4];						//排行榜前三名和最后一击的玩家名字
+    
+    WorldBossInfoSMsg()
+        : PlayerMsg(id, sizeof(*this))
+		, bossId(0)
+		, havePrize(0)
+    {
+		bzero(ranks, sizeof(ranks));
+	}
+};
+
+/**
+ * \brief 世界Boss数据
+ */
+struct WorldBossDataSMsg: public PlayerMsg
+{
+    enum { id = 0x922};
+
+	uint16 bossId;					//BossId
+	uint16 bossLevel;
+	uint64 bossHp;					//boss剩余血量
+	uint8 havePrize;				//我是否有奖励
+	uint8 encourage;				//我的鼓舞状态
+	uint16 attackTimes;				//我的攻击次数
+	uint8 attackCD;					//我的攻击CD时间
+	uint64 totalDamage;				//我的累计伤害
+	uint32 lastDamage;				//最后伤害的序号
+	uint16 rank;						//我的排名
+	uint8 count;
+	struct LastDamage
+	{
+		char attacker[PLAYER_NAME_SIZE];
+		uint64 damage;
+	}damages[];						//最近玩家伤害
+    
+    WorldBossDataSMsg()
+        : PlayerMsg(id, sizeof(*this))
+		, bossId(0)
+		, bossLevel(0)
+		, bossHp(0)
+		, havePrize(0)
+		, encourage(0)
+		, attackTimes(0)
+		, attackCD(0)
+		, totalDamage(0)
+		, lastDamage(0)
+		, rank(0)
+		, count(0)
+    {}
+
+	uint16 getSize()
+	{
+		return sizeof(*this) + sizeof(damages[0]) * count;
+	}
+
+	static WorldBossDataSMsg* create(uint8 n)
+	{
+		NEW_MSG(WorldBossDataSMsg, sizeof(WorldBossDataSMsg) + n * sizeof(LastDamage));
+		if(n)
+		{
+			bzero(newmsg->damages, n*sizeof(LastDamage));
+		}
+		return newmsg;
+	}
+};
+
+/**
+ * \brief 伤害排行榜
+ */
+struct WorldBossDamageRankSMsg: public PlayerMsg
+{
+    enum { id = 0x923 };
+
+	uint8 count;
+	struct
+	{
+		char playerName[PLAYER_NAME_SIZE];
+		uint32 level;
+		uint32 card;
+		uint64 damage;
+	}data[0];
+    
+    WorldBossDamageRankSMsg()
+        : PlayerMsg(id, sizeof(*this))
+		, count(0)
+    {
+
+	}
+
+	static WorldBossDamageRankSMsg* create(uint8 n)
+	{
+		NEW_MSG(WorldBossDamageRankSMsg,
+			sizeof(WorldBossDamageRankSMsg) + n * (PLAYER_NAME_SIZE+16));
+		if(n)
+		{
+			newmsg->count = n;
+			bzero(newmsg->data, n*sizeof(newmsg->data[0]));
+		}
+		return newmsg;
+	}
+};
+
+#pragma pack(pop)
+
+CORE_NAMESPACE_END
+
+#endif//__NXCORE_WORLDBOSSMSG__
+

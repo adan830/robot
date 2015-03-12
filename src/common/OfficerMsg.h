@@ -1,0 +1,149 @@
+#ifndef __OFFICER_MSG__
+#define __OFFICER_MSG__
+
+#include "MsgDefine.h"
+
+CORE_NAMESPACE_START
+
+#pragma pack(push, 1)
+
+struct OfficerOpCMsg : public PlayerMsg
+{
+    enum { id = 0xAF0 };
+
+    uint32 op;
+    uint64 param;
+	char name[PLAYER_NAME_SIZE];
+    
+    OfficerOpCMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , op(0)
+        , param(0)
+    {
+		bzero(name, sizeof(name));
+	}
+};
+
+struct OfficerInfoSMsg : public PlayerMsg
+{
+    enum { id = 0xAF1 };
+
+    OfficerProps props;
+
+    OfficerInfoSMsg()
+        : PlayerMsg(id, sizeof(*this))
+    {}
+};
+
+struct OfficerListSMsg : public PlayerMsg
+{
+    enum { id = 0xAF2 };
+
+    uint32	mode;				// 不同功能类型，见OfficerEnums.h 
+	uint32	result;				// 结果类型，参见枚举OfficerOpResult(OfficerEnums.h)
+	uint32	count;
+
+    struct tagTarget 
+	{
+        uint64 CharId;			// 玩家Id
+        char   Name[TINYSTR];	// 名字
+        uint32 LeaderCard;		// 玩家图标
+        uint32 OfficerLevel;	// 当前的官衔等级
+        uint32 Power;			// 战力
+        uint32 Level;			// 等级
+        uint32 Renown;			// 声望值
+        uint32 Disable;			// 是否在保护CD中
+    } data[0];
+
+    OfficerListSMsg()
+        : PlayerMsg(id, sizeof(*this))
+        , mode(0)
+		, count(0)
+    {
+		bzero(data, sizeof(data));
+	}
+
+	int getSize() const
+	{
+		return static_cast<int>(sizeof(*this) + sizeof(data[0]) * count);
+	}
+};
+
+struct OfficerTotalInfoSMsg : public PlayerMsg
+{
+	enum { id = 0xAF3 };
+
+	uint32 count;		// 爵位的总个数
+
+	struct tagTarget
+	{
+		uint8	type;	// 爵位的Id(类型)
+		uint16	num;	// 当前爵位的人数
+	}data[0];
+
+	OfficerTotalInfoSMsg()
+		: PlayerMsg(id, sizeof(*this))
+		, count(0)
+	{
+		bzero(data, sizeof(data));
+	}
+
+	int getSize() const
+	{
+		return static_cast<int>(sizeof(*this) + sizeof(data[0]) * count);
+	}
+};
+
+// 指定爵位的玩家列表信息
+struct OfficerPlayerListSMsg : public PlayerMsg
+{
+	enum { id = 0xAF4 };
+
+	uint8	type;		// 爵位的类型
+	uint32	count;		// 爵位的玩家总数
+
+	struct tagTarget
+	{
+		uint64	id;							// 玩家的Id
+		char	name[PLAYER_NAME_SIZE];		// 玩家名字
+		uint32	playerIcon;					// 玩家图标
+		uint32	level;						// 等级
+		uint32	power;						// 战力
+		uint32	renown;						// 声望
+		uint32	disable;					// 是否可以挑战
+        uint32  officerlevel;               // 官爵等级
+	}data[0];
+
+	OfficerPlayerListSMsg()
+		: PlayerMsg(id, sizeof(*this))
+		, count(0)
+	{
+		bzero(data, sizeof(data));
+	}
+
+	uint16 getSize() const
+	{
+		return static_cast<uint16>(sizeof(*this) + sizeof(data[0]) * count);
+	}
+};
+
+struct OfficerOnlineNumSMsg : public PlayerMsg
+{
+	enum { id = 0xAF5 };
+
+	uint32 num;
+
+	OfficerOnlineNumSMsg()
+		: PlayerMsg(id, sizeof(*this))
+		, num(0)
+	{
+
+	}
+};
+
+#pragma pack(pop)
+
+CORE_NAMESPACE_END
+
+#endif//__NXCORE_BATTLEMSG__
+

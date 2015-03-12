@@ -31,6 +31,7 @@ typedef void (*msg_handler_t)(void*, Task*);
 		(msg_handler_t)_##task_type##_##msg_type##_handler);} \
 	static void _##task_type##_##msg_type##_handler(msg_type* msg, Task* task)
 
+#ifndef __SGROBOT__
 #define NEW_MAX_MSG(msg_type) \
 	msg_type* newmsg = new (new char[MSG_MAX_SIZE]) msg_type(); \
 	MM_CHECKIN(newmsg, MSG_MAX_SIZE)
@@ -48,6 +49,7 @@ typedef void (*msg_handler_t)(void*, Task*);
 	memcpy(newmsg, oldmsg, oldmsg->size); \
 	MM_CHECKIN(newmsg, oldmsg->size)
 	
+#endif
 
 #define CHECK_MSG_SIZE(msg_type) \
 	if(msg->size != sizeof(msg_type)) \
