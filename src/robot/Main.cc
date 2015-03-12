@@ -1,3 +1,6 @@
+#include <fstream>
+#include <sstream>
+#include <iostream>
 #include "Opcodes.h"
 #include "Client.h"
 
@@ -9,20 +12,31 @@ int main(int argc, char** argv) {
     tableOpcodes.BuildCmdList();
     tableSessions.InitFromFile();
 
-    EventLoop loop;
-    if (argc > 1) {
-        InetAddress account("221.228.205.91", 9002);
-        InetAddress gateway("221.228.205.91", 11002);
-    
-        Client client(&loop, account, gateway, 2, 10, 1);
-        loop.loop();
-    } else {
-        InetAddress account("192.168.0.243", 6668);
-        InetAddress gateway("192.168.0.243", 6607);
-    
-        Client client(&loop, account, gateway, 1, 10, 1);
-        loop.loop();
+    std::fstream fs;
+    fs.open("server.txt", std::fstream::in);
+    if (!fs.is_open()) {
+        std::cout << "Need Server Config File\n";
+        return false;
     }
+
+    char line[256];
+    fs.getline(line, 256);
+    fs.close();
+    
+    string ip;
+    uint16_t accountport = 0;
+    uint16_t gatewayport = 0;
+    
+    std::stringstream ss(line);
+    ss >> ip >> accountport >> gatewayport;
+    
+    EventLoop loop;
+
+    InetAddress account(ip.c_str(), accountport);
+    InetAddress gateway(ip.c_str(), gatewayport);
+    
+    Client client(&loop, account, gateway, 1, 10, 1);
+    loop.loop();
     
     return 0;
 }
